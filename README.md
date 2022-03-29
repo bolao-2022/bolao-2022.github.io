@@ -2,6 +2,11 @@
 
 Este é o repositório do frontend do bolão.
 
+> **ATENÇÃO** Para usar este repositório como a base para o
+> site público do bolão, ele precisa ser **PÚBLICO**! Assim, é
+> preciso ter todo cuidado para não _committar_ dados sensíveis
+> neste repositório.
+
 A ideia é construírmos o frontend usando puro HTML, CSS e
 JavaScript: o famoso [Vanilla JS](http://vanilla-js.com/).
 
