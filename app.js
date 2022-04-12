@@ -35,7 +35,7 @@ async function view_jogo(jid) {
     let band2 = paises[jogo.time2][1];
     div.innerHTML = `
         <h2>Jogo ${jogo.idj}</h2>
-        <p><img src="${band1}">${pais1} X ${pais2}<img src="${band2}"></p>
+        <p><img src="${band1}?tx=w_30">${pais1} X ${pais2}<img src="${band2}?tx=w_30"></p>
         <p>${hora.toDateString()}, ${jogo.local}</p>
     `;
 }
