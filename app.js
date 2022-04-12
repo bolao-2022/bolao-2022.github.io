@@ -1,6 +1,7 @@
-PRODUCTION_API = "https://dev.bolao-2022.appspot.com"
-DEV_API = "http://0.0.0.0:8080"
-API = location.hostname == "0.0.0.0" ? DEV_API : PRODUCTION_API;
+const PRODUCTION_API = "https://dev.bolao-2022.appspot.com"
+const DEV_API = "http://0.0.0.0:8080"
+const LOCALS = ['0.0.0.0', '127.0.0.1', 'localhost'];
+const API = LOCALS.includes(location.hostname) ? DEV_API : PRODUCTION_API;
 
 let div = document.querySelector("div");
 
