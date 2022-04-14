@@ -1,4 +1,4 @@
-const PRODUCTION_API = "https://dev-dot-bolao-2022.appspot.com"
+const PRODUCTION_API = "https://dev.bolao-2022.appspot.com"
 const DEV_API = "http://0.0.0.0:8080"
 const LOCALS = ['0.0.0.0', '127.0.0.1', 'localhost'];
 const API = LOCALS.includes(location.hostname) ? DEV_API : PRODUCTION_API;
