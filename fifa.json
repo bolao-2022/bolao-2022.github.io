@@ -1,0 +1,562 @@
+{
+  "paises": {
+    "ARG": [
+      "Argentina",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/ARG"
+    ],
+    "BEL": [
+      "Bélgica",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/BEL"
+    ],
+    "BRA": [
+      "Brasil",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/BRA"
+    ],
+    "CAN": [
+      "Canadá",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/CAN"
+    ],
+    "CMR": [
+      "Camarões",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/CMR"
+    ],
+    "CRO": [
+      "Croácia",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/CRO"
+    ],
+    "DEN": [
+      "Dinamarca",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/DEN"
+    ],
+    "ECU": [
+      "Equador",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/ECU"
+    ],
+    "ENG": [
+      "Inglaterra",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/ENG"
+    ],
+    "ESP": [
+      "Espanha",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/ESP"
+    ],
+    "FRA": [
+      "França",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/FRA"
+    ],
+    "GER": [
+      "Alemanha",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/GER"
+    ],
+    "GHA": [
+      "Gana",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/GHA"
+    ],
+    "IRN": [
+      "Irã",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/IRN"
+    ],
+    "JPN": [
+      "Japão",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/JPN"
+    ],
+    "KOR": [
+      "Coreia do Sul",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/KOR"
+    ],
+    "KSA": [
+      "Arábia Saudita",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/KSA"
+    ],
+    "MAR": [
+      "Marrocos",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/MAR"
+    ],
+    "MEX": [
+      "México",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/MEX"
+    ],
+    "NED": [
+      "Países Baixos",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/NED"
+    ],
+    "POL": [
+      "Polónia",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/POL"
+    ],
+    "POR": [
+      "Portugal",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/POR"
+    ],
+    "QAT": [
+      "Catar",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/QAT"
+    ],
+    "SEN": [
+      "Senegal",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/SEN"
+    ],
+    "SRB": [
+      "Sérvia",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/SRB"
+    ],
+    "SUI": [
+      "Suíça",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/SUI"
+    ],
+    "TUN": [
+      "Tunísia",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/TUN"
+    ],
+    "UAE": [
+      "Emirados Árabes Unidos",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/UAE"
+    ],
+    "URU": [
+      "Uruguai",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/URU"
+    ],
+    "USA": [
+      "Estados Unidos",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/USA"
+    ],
+    "VAN": [
+      "Vanuatu",
+      "https://cloudinary.fifa.com/api/v1/picture/flags-sq-4/VAN"
+    ]
+  },
+  "jogos": {
+    "2": {
+      "jid": "2",
+      "placar": null,
+      "time1": "SEN",
+      "time2": "NED",
+      "hora": 1669024800,
+      "local": "Al Thumama Stadium",
+      "grupo": "A"
+    },
+    "3": {
+      "jid": "3",
+      "placar": null,
+      "time1": "ENG",
+      "time2": "IRN",
+      "hora": 1669035600,
+      "local": "Khalifa International Stadium",
+      "grupo": "B"
+    },
+    "1": {
+      "jid": "1",
+      "placar": null,
+      "time1": "QAT",
+      "time2": "ECU",
+      "hora": 1669046400,
+      "local": "Al Bayt Stadium",
+      "grupo": "A"
+    },
+    "4": {
+      "jid": "4",
+      "placar": null,
+      "time1": "USA",
+      "time2": "EUR",
+      "hora": 1669057200,
+      "local": "Ahmad Bin Ali Stadium",
+      "grupo": "B"
+    },
+    "8": {
+      "jid": "8",
+      "placar": null,
+      "time1": "ARG",
+      "time2": "KSA",
+      "hora": 1669111200,
+      "local": "Lusail Stadium",
+      "grupo": "C"
+    },
+    "6": {
+      "jid": "6",
+      "placar": null,
+      "time1": "DEN",
+      "time2": "TUN",
+      "hora": 1669122000,
+      "local": "Education City Stadium",
+      "grupo": "D"
+    },
+    "7": {
+      "jid": "7",
+      "placar": null,
+      "time1": "MEX",
+      "time2": "POL",
+      "hora": 1669132800,
+      "local": "Stadium 974",
+      "grupo": "C"
+    },
+    "5": {
+      "jid": "5",
+      "placar": null,
+      "time1": "FRA",
+      "time2": "ICP 1",
+      "hora": 1669143600,
+      "local": "Al Janoub Stadium",
+      "grupo": "D"
+    },
+    "12": {
+      "jid": "12",
+      "placar": null,
+      "time1": "MAR",
+      "time2": "CRO",
+      "hora": 1669197600,
+      "local": "Al Bayt Stadium",
+      "grupo": "F"
+    },
+    "11": {
+      "jid": "11",
+      "placar": null,
+      "time1": "GER",
+      "time2": "JPN",
+      "hora": 1669208400,
+      "local": "Khalifa International Stadium",
+      "grupo": "E"
+    },
+    "10": {
+      "jid": "10",
+      "placar": null,
+      "time1": "ESP",
+      "time2": "ICP 2",
+      "hora": 1669219200,
+      "local": "Al Thumama Stadium",
+      "grupo": "E"
+    },
+    "9": {
+      "jid": "9",
+      "placar": null,
+      "time1": "BEL",
+      "time2": "CAN",
+      "hora": 1669230000,
+      "local": "Ahmad Bin Ali Stadium",
+      "grupo": "F"
+    },
+    "13": {
+      "jid": "13",
+      "placar": null,
+      "time1": "SUI",
+      "time2": "CMR",
+      "hora": 1669284000,
+      "local": "Al Janoub Stadium",
+      "grupo": "G"
+    },
+    "14": {
+      "jid": "14",
+      "placar": null,
+      "time1": "URU",
+      "time2": "KOR",
+      "hora": 1669294800,
+      "local": "Education City Stadium",
+      "grupo": "H"
+    },
+    "15": {
+      "jid": "15",
+      "placar": null,
+      "time1": "POR",
+      "time2": "GHA",
+      "hora": 1669305600,
+      "local": "Stadium 974",
+      "grupo": "H"
+    },
+    "16": {
+      "jid": "16",
+      "placar": null,
+      "time1": "BRA",
+      "time2": "SRB",
+      "hora": 1669316400,
+      "local": "Lusail Stadium",
+      "grupo": "G"
+    },
+    "17": {
+      "jid": "17",
+      "placar": null,
+      "time1": "EUR",
+      "time2": "IRN",
+      "hora": 1669370400,
+      "local": "Ahmad Bin Ali Stadium",
+      "grupo": "B"
+    },
+    "18": {
+      "jid": "18",
+      "placar": null,
+      "time1": "QAT",
+      "time2": "SEN",
+      "hora": 1669381200,
+      "local": "Al Thumama Stadium",
+      "grupo": "A"
+    },
+    "19": {
+      "jid": "19",
+      "placar": null,
+      "time1": "NED",
+      "time2": "ECU",
+      "hora": 1669392000,
+      "local": "Khalifa International Stadium",
+      "grupo": "A"
+    },
+    "20": {
+      "jid": "20",
+      "placar": null,
+      "time1": "ENG",
+      "time2": "USA",
+      "hora": 1669402800,
+      "local": "Al Bayt Stadium",
+      "grupo": "B"
+    },
+    "21": {
+      "jid": "21",
+      "placar": null,
+      "time1": "TUN",
+      "time2": "ICP 1",
+      "hora": 1669456800,
+      "local": "Al Janoub Stadium",
+      "grupo": "D"
+    },
+    "22": {
+      "jid": "22",
+      "placar": null,
+      "time1": "POL",
+      "time2": "KSA",
+      "hora": 1669467600,
+      "local": "Education City Stadium",
+      "grupo": "C"
+    },
+    "23": {
+      "jid": "23",
+      "placar": null,
+      "time1": "FRA",
+      "time2": "DEN",
+      "hora": 1669478400,
+      "local": "Stadium 974",
+      "grupo": "D"
+    },
+    "24": {
+      "jid": "24",
+      "placar": null,
+      "time1": "ARG",
+      "time2": "MEX",
+      "hora": 1669489200,
+      "local": "Lusail Stadium",
+      "grupo": "C"
+    },
+    "25": {
+      "jid": "25",
+      "placar": null,
+      "time1": "JPN",
+      "time2": "ICP 2",
+      "hora": 1669543200,
+      "local": "Ahmad Bin Ali Stadium",
+      "grupo": "E"
+    },
+    "26": {
+      "jid": "26",
+      "placar": null,
+      "time1": "BEL",
+      "time2": "MAR",
+      "hora": 1669554000,
+      "local": "Al Thumama Stadium",
+      "grupo": "F"
+    },
+    "27": {
+      "jid": "27",
+      "placar": null,
+      "time1": "CRO",
+      "time2": "CAN",
+      "hora": 1669564800,
+      "local": "Khalifa International Stadium",
+      "grupo": "F"
+    },
+    "28": {
+      "jid": "28",
+      "placar": null,
+      "time1": "ESP",
+      "time2": "GER",
+      "hora": 1669575600,
+      "local": "Al Bayt Stadium",
+      "grupo": "E"
+    },
+    "29": {
+      "jid": "29",
+      "placar": null,
+      "time1": "CMR",
+      "time2": "SRB",
+      "hora": 1669629600,
+      "local": "Al Janoub Stadium",
+      "grupo": "G"
+    },
+    "30": {
+      "jid": "30",
+      "placar": null,
+      "time1": "KOR",
+      "time2": "GHA",
+      "hora": 1669640400,
+      "local": "Education City Stadium",
+      "grupo": "H"
+    },
+    "31": {
+      "jid": "31",
+      "placar": null,
+      "time1": "BRA",
+      "time2": "SUI",
+      "hora": 1669651200,
+      "local": "Stadium 974",
+      "grupo": "G"
+    },
+    "32": {
+      "jid": "32",
+      "placar": null,
+      "time1": "POR",
+      "time2": "URU",
+      "hora": 1669662000,
+      "local": "Lusail Stadium",
+      "grupo": "H"
+    },
+    "35": {
+      "jid": "35",
+      "placar": null,
+      "time1": "ECU",
+      "time2": "SEN",
+      "hora": 1669734000,
+      "local": "Khalifa International Stadium",
+      "grupo": "A"
+    },
+    "36": {
+      "jid": "36",
+      "placar": null,
+      "time1": "NED",
+      "time2": "QAT",
+      "hora": 1669734000,
+      "local": "Al Bayt Stadium",
+      "grupo": "A"
+    },
+    "33": {
+      "jid": "33",
+      "placar": null,
+      "time1": "EUR",
+      "time2": "ENG",
+      "hora": 1669748400,
+      "local": "Ahmad Bin Ali Stadium",
+      "grupo": "B"
+    },
+    "34": {
+      "jid": "34",
+      "placar": null,
+      "time1": "IRN",
+      "time2": "USA",
+      "hora": 1669748400,
+      "local": "Al Thumama Stadium",
+      "grupo": "B"
+    },
+    "37": {
+      "jid": "37",
+      "placar": null,
+      "time1": "ICP 1",
+      "time2": "DEN",
+      "hora": 1669820400,
+      "local": "Al Janoub Stadium",
+      "grupo": "D"
+    },
+    "38": {
+      "jid": "38",
+      "placar": null,
+      "time1": "TUN",
+      "time2": "FRA",
+      "hora": 1669820400,
+      "local": "Education City Stadium",
+      "grupo": "D"
+    },
+    "39": {
+      "jid": "39",
+      "placar": null,
+      "time1": "POL",
+      "time2": "ARG",
+      "hora": 1669834800,
+      "local": "Stadium 974",
+      "grupo": "C"
+    },
+    "40": {
+      "jid": "40",
+      "placar": null,
+      "time1": "KSA",
+      "time2": "MEX",
+      "hora": 1669834800,
+      "local": "Lusail Stadium",
+      "grupo": "C"
+    },
+    "41": {
+      "jid": "41",
+      "placar": null,
+      "time1": "CRO",
+      "time2": "BEL",
+      "hora": 1669906800,
+      "local": "Ahmad Bin Ali Stadium",
+      "grupo": "F"
+    },
+    "42": {
+      "jid": "42",
+      "placar": null,
+      "time1": "CAN",
+      "time2": "MAR",
+      "hora": 1669906800,
+      "local": "Al Thumama Stadium",
+      "grupo": "F"
+    },
+    "43": {
+      "jid": "43",
+      "placar": null,
+      "time1": "JPN",
+      "time2": "ESP",
+      "hora": 1669921200,
+      "local": "Khalifa International Stadium",
+      "grupo": "E"
+    },
+    "44": {
+      "jid": "44",
+      "placar": null,
+      "time1": "ICP 2",
+      "time2": "GER",
+      "hora": 1669921200,
+      "local": "Al Bayt Stadium",
+      "grupo": "E"
+    },
+    "45": {
+      "jid": "45",
+      "placar": null,
+      "time1": "GHA",
+      "time2": "URU",
+      "hora": 1669993200,
+      "local": "Al Janoub Stadium",
+      "grupo": "H"
+    },
+    "46": {
+      "jid": "46",
+      "placar": null,
+      "time1": "KOR",
+      "time2": "POR",
+      "hora": 1669993200,
+      "local": "Education City Stadium",
+      "grupo": "H"
+    },
+    "47": {
+      "jid": "47",
+      "placar": null,
+      "time1": "SRB",
+      "time2": "SUI",
+      "hora": 1670007600,
+      "local": "Stadium 974",
+      "grupo": "G"
+    },
+    "48": {
+      "jid": "48",
+      "placar": null,
+      "time1": "CMR",
+      "time2": "BRA",
+      "hora": 1670007600,
+      "local": "Lusail Stadium",
+      "grupo": "G"
+    }
+  }
+}
