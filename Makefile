@@ -15,7 +15,7 @@ clean:
 	find . -type f -name "*.pyc" -exec rm '{}' +
 	find . -type d -name "__pycache__" -exec rmdir '{}' +
 	find . -type d -name ".pytest_cache" -exec rmdir '{}' +
-	rm -rf build dist venv
+	rm -rf dist build venv *.egg-info .coverage
 
 test: venv
 	$(PIP) install --requirement requirements-test.txt
