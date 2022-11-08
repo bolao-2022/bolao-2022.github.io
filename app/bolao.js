@@ -18,7 +18,6 @@ export function get_jogo(jid) {
            "grupo": null
         }
     // adiciona objeto Date
-    console.log(jogo.hora);
     jogo._hora = new Date(Date.parse(jogo.hora));
     // adiciona urls das bandeiras
     jogo.band1 = tabela.paises[jogo?.time1]?.band;

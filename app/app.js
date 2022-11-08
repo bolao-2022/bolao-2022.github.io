@@ -34,11 +34,13 @@ function view_header() {
 
 function view_login_screen() {
     $main.innerHTML = `
-        <a>login with google</a>
+        <div id="login-screen">
+            <p>Sign in with Google</p>
+        </div>
     `;
-    let $login = document.querySelector("a");
+    let $login = document.querySelector("#login-screen p");
     $login.addEventListener("click", () => {
-        $login.parentElement.remove($login);
+        $login.innerText = 'aguarde...';
         login();
     });
 }
@@ -60,6 +62,7 @@ function go_to_route() {
 
 function route_main() {
     view_header();
+    $main.innerHTML = '';
     for (let jid=1; jid<=64; jid++) {
         let $jogo = document.createElement("bolao-jogo");
         $jogo.setAttribute("jid", `${jid}`);

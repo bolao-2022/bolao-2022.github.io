@@ -1,5 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.13.0/firebase-app.js';
-import { getAuth, signOut, getRedirectResult, signInWithRedirect, onAuthStateChanged, GoogleAuthProvider } from 'https://www.gstatic.com/firebasejs/9.13.0/firebase-auth.js';
+import { getAuth, signOut, getRedirectResult, signInWithPopup, signInWithRedirect, onAuthStateChanged, GoogleAuthProvider } from 'https://www.gstatic.com/firebasejs/9.13.0/firebase-auth.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCj45oWIMWQE0zKfqPyzHxUwJyoRHFj-2k",
@@ -30,7 +30,8 @@ export function watch_login_status(user_logged_in, user_logged_out) {
 }
 
 export function login() {
-    signInWithRedirect(auth, provider);
+    //signInWithRedirect(auth, provider);
+    signInWithPopup(auth, provider);
 }
 
 export function logout() {

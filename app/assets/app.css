@@ -32,6 +32,20 @@ main {
   overflow: hidden scroll;
 }
 
+#login-screen {
+    height: 60%;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+}
+
+#login-screen p {
+    border: 1px solid gray;
+    box-shadow: 4px 4px 12px 0px rgba(0,0,0,0.45);
+    padding: 1em;
+    cursor: pointer;
+}
+
 /* bolao-jogo */
 
             /* <style> */

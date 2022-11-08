@@ -15,13 +15,13 @@ let $main = document.querySelector("main");
 
 export function view_perfil(perfil) {
     $main.innerHTML = `
-        <h1>perfil ${perfil}
+        <h1>perfil ${perfil}</h1>
     `;
 }
 
 export async function view_jogo(jid) {
     $main.innerHTML = `
-        <h1>jogo ${jid}
+        <h1>jogo ${jid}</h1>
     `;
     let jogo = bolao.get_jogo(jid);
     $main.innerHTML = `
