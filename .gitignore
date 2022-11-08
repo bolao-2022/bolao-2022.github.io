@@ -1,6 +1,8 @@
 # Criadas manualmente
 
 build*
+node_modules
+package*
 
 # Created by https://www.toptal.com/developers/gitignore/api/vim
 # Edit at
