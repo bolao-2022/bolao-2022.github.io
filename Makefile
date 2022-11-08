@@ -1,11 +1,11 @@
 help:
-	@echo "uso: make [ run | deploy ]"
+	@echo "uso: make [ run | build | test-deploy | deploy ]"
 
-build: app.css app.js index.html
+build: index.html js
 	mkdir -p build
-	cp index.html build
-	cp app.css build
-	cp app.js build
+	cp index.html build/
+	cp js/* build/
+	cp -r assets build/
 
 run: build
 	npx live-server --host=0.0.0.0 --port=12345 --no-browser
@@ -20,6 +20,9 @@ clean:
 test: venv
 	$(PIP) install --requirement requirements-test.txt
 	$(PYTEST)
+
+test-deploy: build
+	rsync -arv --delete --delete-excluded build/  dsc:public_html/fb/
 
 deploy: build
 	gcloud app deploy build/app.yaml --project bolao-2022 -q -v dev
