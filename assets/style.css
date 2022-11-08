@@ -1,0 +1,107 @@
+* { margin: 0; padding: 0; }
+
+body {
+  display: grid;
+  grid-template-areas:
+    "header"
+    "content";
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+}
+
+header {
+  border: 2px solid blue;
+  grid-area: header;
+  padding: 0.5em;
+  background: #eee;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header p {
+  text-align: center;
+}
+
+main {
+  height: *;
+  grid-area: content;
+  border: 2px solid red;
+  overflow: hidden scroll;
+}
+
+/* bolao-jogo */
+
+            /* <style> */
+                div {
+                    margin: 0.5em 0;
+                }
+                #card {
+                    margin: 4px 0 0 0;
+                    padding: 0 12px;
+                    border: 1px solid #82b7b7;
+                    border-bottom: 0;
+                    background-color: #bee;
+                    border-radius: 12px 12px 0 0;
+                    display: grid;
+                    grid-template-columns: 1fr 20% max-content 20% 1fr;
+                    align-items: center;
+                }
+                #pais1 { text-align: right; }
+                #pais2 { text-align: left; }
+                #inputs {
+                  text-align: center; 
+                  padding: 0 1em;
+                }
+                #inputs input { text-align: center; font-size: 100%;}
+                img, div span{
+                    margin: 0 0.4em;
+                    vertical-align: middle;
+                }
+                input {
+                    display: inline;
+                    text-align: center;
+                    background-color: lightgray;
+                    border: 3px solid transparent;
+                    border-radius: 5px;
+                }
+                input:focus {
+                    background-color: white;
+                    border: 3px solid red;
+                    outline: none;
+                }
+                #info {
+                    text-align: center;
+                    margin: 0 0 1em 0;
+                    padding: 0.5em 12px;
+                    border: 1px solid #82b7b7;
+                    border-top: 0;
+                    background-color: #dff;
+                    border-radius: 0 0 12px 12px;
+                }
+                #info.off {
+                    background-color: #dff;
+                    max-height: 0;
+                    display: none;
+                }
+                #card.off {
+                    border-radius: 12px;
+                    border: 1px solid black;
+                }
+                @media (max-width: 700px) {
+                    #card {
+                        grid-template-columns: 1fr max-content 1fr;
+                        font-size: 120%;
+                    }
+                    #jid, #extras, #nome1, #nome2 {
+                        display: none;
+                    }
+                }
+                @media not (max-width: 700px) {
+                    #sigla1, #sigla2 {
+                        display: none;
+                    }
+                }
+            /* </style> */
