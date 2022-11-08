@@ -1,11 +1,9 @@
 help:
 	@echo "uso: make [ run | build | test-deploy | deploy ]"
 
-build: index.html js
+build: app
 	mkdir -p build
-	cp index.html build/
-	cp js/* build/
-	cp -r assets build/
+	cp -r app/* build/
 
 run: build
 	npx live-server --host=0.0.0.0 --port=12345 --no-browser

@@ -30,9 +30,6 @@ main {
   grid-area: content;
   border: 2px solid red;
   overflow: hidden scroll;
-  display: flex;
-  justify-content: center;
-  align-content: center;
 }
 
 /* bolao-jogo */
