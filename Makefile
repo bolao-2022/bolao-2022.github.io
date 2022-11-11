@@ -1,9 +1,10 @@
 help:
 	@echo "uso: make [ build | run | clean | deploy-test | deploy-gcloud ]"
 
-build: app
+build: $(wildcard app/**)
 	mkdir -p build
 	cp -r app/* build/
+	touch build
 
 run: build
 	npx live-server --host=0.0.0.0 --port=12345 --no-browser
