@@ -1,5 +1,5 @@
 help:
-	@echo "uso: make [ run | build | test-deploy | deploy ]"
+	@echo "uso: make [ build | run | clean | deploy-test | deploy-gcloud ]"
 
 build: app
 	mkdir -p build
@@ -19,8 +19,8 @@ test: venv
 	$(PIP) install --requirement requirements-test.txt
 	$(PYTEST)
 
-test-deploy: build
+deploy-test: build
 	rsync -arv --delete --delete-excluded build/  dsc:public_html/fb/
 
-deploy: build
+deploy-gcloud: build
 	gcloud app deploy build/app.yaml --project bolao-2022 -q -v dev
