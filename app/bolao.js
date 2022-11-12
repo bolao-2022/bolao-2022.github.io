@@ -1,9 +1,32 @@
-import { FILES, tabela_versao } from './config.js';
+import { FILES, MARGEM_SEGURANCA_PALPITES, tabela_versao } from './config.js';
+import { now_ts } from './utils.js';
+
 import * as bolao from './bolao.js';
-let config = await (await fetch(`${API}`)).json()
 let tabela = await (await fetch(`${FILES}/tabela-${tabela_versao}.json`)).json()
 window.tabela = tabela;
-window.config = config;
+
+let _userdata;
+export async function userdata(reload = false) {
+    if (!_userdata || reload) {
+        let headers = {"Authorization": `Bearer ${window.idToken}`};
+        let data = await (await fetch(`${API}`, {headers:headers})).json();
+        console.log(data);
+        console.log(`token enviado: ${headers['Authorization']}`);
+        console.log(`token recebido: ${data.token}`);
+        _userdata = preprocess_userdata(data);
+        window.ud = _userdata;
+    }
+    return _userdata;
+}
+
+function preprocess_userdata(_userdata) {
+    // STUB
+
+    // atualiza countdown global
+    window.deadline_ts = now_ts() + _userdata.tempo - MARGEM_SEGURANCA_PALPITES;
+    return _userdata;
+}
+
 
 export function get_jogo(jid) {
     let jogo = tabela.jogos[jid];
@@ -41,7 +64,7 @@ class BolaoJogo extends HTMLElement {
     connectedCallback() {
         this.jid = this.getAttribute("jid");
         this.jogo = bolao.get_jogo(this.jid);
-        if (Number(this.jogo.jid) < 2) {
+        if (Number(this.jogo.jid) < 4) {
             this.jogo.placar = [Math.floor(Math.random() * 4), Math.floor(Math.random() * 4)];
         }
         this.$root.innerHTML = `
@@ -53,7 +76,9 @@ class BolaoJogo extends HTMLElement {
                     <img id="band1" src="${this.jogo.band1}?tx=w_30"> 
                 </div>
                 <div id="inputs">
-                    <input id="input1" size="2"> &times; <input id="input2" size="2">
+                    <input id="input1" size="2" value="${this.palpite1}">
+                    &times;
+                    <input id="input2" size="2" value="${this.palpite2}">
                 </div>
                 <div id="pais2">
                     <img id="band2" src="${this.jogo.band2}?tx=w_30">
@@ -70,25 +95,21 @@ class BolaoJogo extends HTMLElement {
                 Pontos acumulados: <span id="pontos">6</span><br>
             </div>
         `;
-        let $card = this.$root.querySelector("#card");
+        // coleta referências para os inputs
+        this.$input1 = this.$root.querySelector("#input1");
+        this.$input2 = this.$root.querySelector("#input2");
+        this.$inputs = this.$root.querySelector("#inputs");
+        this.$pontos = this.$root.querySelector("#pontos");
 
-        // coloca nomes ou sigla dos times
-        var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+        // variáveis para configurar o componente
+        let $card = this.$root.querySelector("#card");
         let $time1 = $card.querySelector("#time1");
         let $time2 = $card.querySelector("#time2");
-        let $input1 = this.$root.querySelector("#input1");
-        let $input2 = this.$root.querySelector("#input2");
-        if (this.jogo.placar) {
-            $input1.value = this.jogo.placar[0];
-            $input2.value = this.jogo.placar[1];
-            $input1.setAttribute("disabled", true);
-            $input2.setAttribute("disabled", true);
-        } else {
-            let $info = this.$root.querySelector("#info");
-            //$info.innerHTML = "";
-        }
+        let $input1 = this.$input1;
+        let $input2 = this.$input2;
+
+        // configura componente
         $input1.addEventListener("keydown", ev => {
-            console.log(ev);
             if (ev.key.length == 1 && !/^\d$/.test(ev.key)) {
                 ev.preventDefault();
             }
@@ -96,8 +117,59 @@ class BolaoJogo extends HTMLElement {
         $input1.addEventListener("keyup", ev => {
             $input1.value = $input1.value.replace(/\D/g, '');
         });
-        //setInterval(() => {this.update()}, 1000);
+        let change_handler = ev => {
+            console.log(`novo placar jogo ${this.jid}: ${this.get_placar()}`);
+        };
+        $input1.addEventListener("change", change_handler);
+        $input2.addEventListener("change", change_handler);
+        if (!this.placar) {
+            setInterval(() => {this.update()}, 1000);
+        }
+    }
+
+    get_placar() {
+        return `${this.$input1.value} ${this.$input2.value}`
+    }
+
+    esta_editavel() {
+        // STUB
+        return !window.site_bloqueado;
+    }
+
+    update() {
+        let $input1 = this.$input1;
+        let $input2 = this.$input2;
+        let $inputs = this.$inputs;
+
+        // atualiza placar
+        if (this.placar) {
+            $input1.value = this.jogo.placar[0];
+            $input2.value = this.jogo.placar[1];
+            // atualiza pontos
+            // TODO:
+            console.log('atualizar pontos aqui! por ora, apenas stub');
+            this.$pontos = 6;
+        }
+
+        // borda piscante se tempo tá acabando
+        if (window.tempo > 0 && window.tempo < 10) {
+            $inputs.classList.add("alerts-border");
+        } else if (window.tempo < 0) {
+            $inputs.classList.remove("alerts-border");
+        }
+
+        // atualiza editabilidade
+        if (this.esta_editavel()) {
+            console.log("editável");
+            $input1.removeAttribute("disabled");
+            $input2.removeAttribute("disabled");
+        } else {
+            console.log("não editável");
+            $input1.setAttribute("disabled", true);
+            $input2.setAttribute("disabled", true);
+        }
     }
 }
 
 customElements.define("bolao-jogo", BolaoJogo);
+

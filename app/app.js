@@ -1,51 +1,95 @@
 import { watch_login_status, login, logout } from './auth.js';
 import { API } from './config.js';
 import * as views from './views.js';
+import { now_ts } from './utils.js';
+import { userdata } from './bolao.js';
 
 // identify main element in DOM
 let $main = document.querySelector("main");
 
-// watch user login status and either call go_to_route if a
-// user is logged in or call view_login_screen otherwise
-watch_login_status(go_to_route, view_login_screen);
+main();
 
-// watch for url location changes
-window.addEventListener('popstate', function (event) {
-    console.log(location.href);
-    go_to_route();
-});
+function main() {
 
+    // instala o watch do status de login
+    // - invoca go_to_route cada vez que o usuário loga
+    // - invoca view_login_screen cada vez que usuário desloga
+    // user is logged in or call view_login_screen otherwise
+    watch_login_status(go_to_route, view_login_screen);
 
-var mq = window.matchMedia("(max-width: 1200px)")
-function myFunction(mq) {
-  route_main();
-  if (mq.matches) { // If media query matches
-    document.body.style.backgroundColor = "red";
-  } else {
-    document.body.style.backgroundColor = "black";
-  }
+    // instala watch para mudanças da URL no browser
+    // - invoca go_to_route()
+    window.addEventListener('popstate', function (event) {
+        console.log(location.href);
+        go_to_route();
+    });
+
+    var mq = window.matchMedia("(max-width: 1200px)")
+    function myFunction(mq) {
+      view_main();
+      if (mq.matches) { // If media query matches
+        document.body.style.backgroundColor = "red";
+      } else {
+        document.body.style.backgroundColor = "black";
+      }
+    }
+    mq.addListener(myFunction)
 }
-mq.addListener(myFunction)
 
-function view_header() {
+let _cron_interval_handler;
+function view_header(udata) {
+    // elementos dinâmicos do header
     let $perfil = document.querySelector("#perfil");
-    $perfil.innerText = window.user.email;
+    let $cron = document.querySelector("#cron");
+
+    // pro caso de não haver usuário logado/detectado
+    if (!udata?.email) {
+        $perfil.innerText = "";
+        $cron.innerText = "";
+        return;
+    }
+
+    // exibe email do usuário
+    $perfil.innerText = udata.email;
+    if (_cron_interval_handler) {
+        return;
+    }
+
+    // exibe e instala cronômetro
+    _cron_interval_handler = setInterval(() => {
+        window.tempo = window.deadline_ts - now_ts();
+        if (window.tempo < 0) {
+            window.site_bloqueado = true;
+            $cron.innerText = "site bloqueado";
+            $cron.classList.remove('alerts-border');
+        } else {
+            $cron.innerText = String(Math.floor(window.tempo));
+            if (window.tempo < 10) {
+                $cron.classList.add('alerts-border');
+            }
+        }
+    }, 1000);
 }
 
 function view_login_screen() {
+    view_header();
     $main.innerHTML = `
-        <div id="login-screen">
+        <div id="center-float">
             <p>Sign in with Google</p>
         </div>
     `;
-    let $login = document.querySelector("#login-screen p");
+    let $div = document.querySelector("#center-float");
+    let $login = document.querySelector("#center-float p");
     $login.addEventListener("click", () => {
-        $login.innerText = 'aguarde...';
+        $div.innerHTML = `
+            <img style="width: 40px; height: auto;" src="assets/progress.gif" alt="">
+        `;
         login();
     });
 }
 
 function go_to_route() {
+    // ativa as views para a rota atual (url) no browser
     let path = location.hash.split("/").slice(1);
     if (path[0] === 'p') {
         let perfil = path[1];
@@ -56,16 +100,29 @@ function go_to_route() {
         views.view_jogo(jogo);
         return;
     } else {
-        route_main();
+        view_main();
     }
 }
 
-function route_main() {
-    view_header();
+async function view_main() {
+    // ajusta as views da view base/principal do site
+    // - header: contador + perfil + menu
+    // - main: tabela da copa + placares + palpites + pontos + rascunho
+    //await new Promise(res => {
+    //    function checa_token() {
+    //        if (window.idToken) res();
+    //        setTimeout(checa_token, 100);
+    //    }
+    //    checa_token();
+    //});
+    let udata = await userdata();
+    view_header(udata);
     $main.innerHTML = '';
     for (let jid=1; jid<=64; jid++) {
         let $jogo = document.createElement("bolao-jogo");
         $jogo.setAttribute("jid", `${jid}`);
+        $jogo.palpite1 = 13;
+        $jogo.palpite2 = 45;
         $main.appendChild($jogo);
     }
     let $logout = document.querySelector("#logout");
@@ -79,4 +136,3 @@ function view_not_found() {
         <h1>não achado!</h1>
     `;
 }
-
