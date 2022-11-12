@@ -24,6 +24,7 @@ export function watch_login_status(user_logged_in, user_logged_out) {
             user.getIdToken().then(idToken => {window.idToken = idToken;})
             user_logged_in(user);
         } else {
+            window.user = null;
             console.log("user logged out");
             user_logged_out(user);
         }
