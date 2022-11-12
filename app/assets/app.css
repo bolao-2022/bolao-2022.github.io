@@ -32,14 +32,14 @@ main {
   overflow: hidden scroll;
 }
 
-#login-screen {
+#center-float {
     height: 60%;
     display: grid;
     justify-content: center;
     align-content: center;
 }
 
-#login-screen p {
+#center-float p {
     border: 1px solid gray;
     box-shadow: 4px 4px 12px 0px rgba(0,0,0,0.45);
     padding: 1em;
@@ -77,7 +77,7 @@ main {
                 input {
                     display: inline;
                     text-align: center;
-                    background-color: lightgray;
+                    background-color: white;
                     border: 3px solid transparent;
                     border-radius: 5px;
                 }
@@ -85,6 +85,11 @@ main {
                     background-color: white;
                     border: 3px solid red;
                     outline: none;
+                }
+                input:disabled {
+                    background-color: #bee;
+                    color: #4a5f5f;
+                    font-weight: bold;
                 }
                 #info {
                     text-align: center;
@@ -119,3 +124,19 @@ main {
                     }
                 }
             /* </style> */
+
+#perfil {
+  color: gray;
+  font-size: 80%;
+}
+
+
+/* efeitos */
+.alerts-border {
+    border: 3px #ff0000 solid;
+    animation: blink 0.5s;
+    animation-iteration-count: 60;
+}
+
+@keyframes blink { 50% { border-color:yellow ; }  }
+
