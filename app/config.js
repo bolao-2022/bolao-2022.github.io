@@ -7,3 +7,6 @@ window.API = API;
 
 export const FILES="https://storage.googleapis.com/bolao-2022.appspot.com/public"
 export const tabela_versao = "0-0"
+
+// tempo de tolerância a exibir a menos no front (em segundos)
+export const MARGEM_SEGURANCA_PALPITES = 5
