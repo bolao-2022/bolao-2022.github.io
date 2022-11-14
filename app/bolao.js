@@ -8,11 +8,16 @@ window.tabela = tabela;
 let _userdata;
 export async function userdata(reload = false) {
     if (!_userdata || reload) {
+        // espera haver token disponível
+        await new Promise(res => {
+            function checa_token() {
+                if (window.idToken) res();
+                setTimeout(checa_token, 100);
+            }
+            checa_token();
+        });
         let headers = {"Authorization": `Bearer ${window.idToken}`};
         let data = await (await fetch(`${API}`, {headers:headers})).json();
-        console.log(data);
-        console.log(`token enviado: ${headers['Authorization']}`);
-        console.log(`token recebido: ${data.token}`);
         _userdata = preprocess_userdata(data);
         window.ud = _userdata;
     }
