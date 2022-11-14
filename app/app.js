@@ -145,7 +145,7 @@ async function view_main() {
             $jogo.palpite1 = "0";
             $jogo.palpite2 = "0";
         }
-        $jogo.addEventListener('novo-placar', async function (ev) {
+        $jogo.addEventListener('novo-palpite', async function (ev) {
             let res = await bolao.salva_palpite(udata.email, udata.pidx, ev.detail);
             console.log(res);
         });

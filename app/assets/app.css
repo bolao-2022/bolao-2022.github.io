@@ -91,7 +91,7 @@ main {
                     color: #4a5f5f;
                     font-weight: bold;
                 }
-                #info {
+                #info-msg {
                     text-align: center;
                     margin: 0 0 1em 0;
                     padding: 0.5em 12px;
@@ -100,7 +100,7 @@ main {
                     background-color: #dff;
                     border-radius: 0 0 12px 12px;
                 }
-                #info.off {
+                #info-msg.off {
                     background-color: #dff;
                     max-height: 0;
                     display: none;

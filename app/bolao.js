@@ -4,6 +4,8 @@ import { now_ts } from './utils.js';
 import * as bolao from './bolao.js';
 let tabela = await (await fetch(`${FILES}/tabela-${tabela_versao}.json`)).json()
 window.tabela = tabela;
+tabela.jogos[1].placar = "3 1";
+tabela.jogos[2].placar = "1 2";
 
 let _userdata;
 export async function userdata(pidx, reload = false) {
@@ -84,9 +86,6 @@ class BolaoJogo extends HTMLElement {
     connectedCallback() {
         this.jid = this.getAttribute("jid");
         this.jogo = bolao.get_jogo(this.jid);
-        if (Number(this.jogo.jid) < 4) {
-            this.jogo.placar = [Math.floor(Math.random() * 4), Math.floor(Math.random() * 4)];
-        }
         this.$root.innerHTML = `
             <div id="card">
                 <div id="jid">Jogo ${this.jogo.jid}<br>Grupo ${this.jogo.grupo}</div>
@@ -113,9 +112,11 @@ class BolaoJogo extends HTMLElement {
                 <div></div>
                 <p id="saving"></p>
             </div>
-            <div id="info">
-                Placar: <span id="placar">3 &times; 2</span><br>
-                Pontos acumulados: <span id="pontos">6</span><br>
+            <div id="info-msg">
+                <div id="info" style="display: none;">
+                    Placar: <span id="placar1"></span>&times;<span id="placar2"></span><br>
+                    Pontos acumulados: <span id="pontos">6</span><br>
+                </div>
             </div>
         `;
         // coleta referências para os inputs
@@ -123,6 +124,9 @@ class BolaoJogo extends HTMLElement {
         this.$input2 = this.$root.querySelector("#input2");
         this.$inputs = this.$root.querySelector("#inputs");
         this.$pontos = this.$root.querySelector("#pontos");
+        this.$info = this.$root.querySelector("#info");
+        this.$placar1 = this.$root.querySelector("#placar1");
+        this.$placar2 = this.$root.querySelector("#placar2");
 
         // variáveis para configurar o componente
         let $card = this.$root.querySelector("#card");
@@ -160,6 +164,7 @@ class BolaoJogo extends HTMLElement {
                 $input1.value = novo_palpite;
             }
         });
+
         let change_handler = async ev => {
             let palpite = {
                 jid: this.jid,
@@ -176,14 +181,14 @@ class BolaoJogo extends HTMLElement {
             } else {
                 $saving.innerText = "ERRO ao salvar palpite!";
             }
-            const event = new CustomEvent('novo-placar', {detail: resp});
+            const event = new CustomEvent('novo-palpite', {detail: resp});
             this.dispatchEvent(event);
             console.log(`novo palpite ${this.jid}: ${this.get_palpite()}`);
         };
         $input1.addEventListener("change", change_handler);
         $input2.addEventListener("change", change_handler);
         if (!this.placar) {
-            setInterval(() => {this.update()}, 1000);
+            setInterval(() => {this.update()}, 500);
         }
     }
 
@@ -200,11 +205,17 @@ class BolaoJogo extends HTMLElement {
         let $input1 = this.$input1;
         let $input2 = this.$input2;
         let $inputs = this.$inputs;
+        let $placar1 = this.$placar1;
+        let $placar2 = this.$placar2;
+        let $info = this.$info;
 
         // atualiza placar
-        if (this.placar) {
-            $input1.value = this.jogo.placar[0];
-            $input2.value = this.jogo.placar[1];
+        let placar = tabela.jogos[this.jid].placar;
+        if (placar) {
+            $info.style.display = 'block';
+            let [placar1, placar2] = placar.split(" ");
+            $placar1.innerText = placar1;
+            $placar2.innerText = placar2;
             // atualiza pontos
             // TODO:
             console.log('atualizar pontos aqui! por ora, apenas stub');
