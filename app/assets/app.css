@@ -130,6 +130,9 @@ main {
   font-size: 80%;
 }
 
+#saving {
+  text-align: center;
+}
 
 /* efeitos */
 .alerts-border {

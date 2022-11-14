@@ -98,7 +98,7 @@ class BolaoJogo extends HTMLElement {
                 <div id="inputs">
                     <input id="input1" size="2" value="${this.palpite1}">
                     &times;
-                    <input id="input2" size="2" value="${this.palpite2}">
+                    <input id="input2" size="2" value="${this.palpite2}"><br>
                 </div>
                 <div id="pais2">
                     <img id="band2" src="${this.jogo.band2}?tx=w_30">
@@ -109,11 +109,13 @@ class BolaoJogo extends HTMLElement {
                     <span id="hora">${this.jogo._hora.toDateString()}</span><br>
                     <span id="local">${this.jogo.local}</span>
                 </div>
+                <div></div>
+                <div></div>
+                <p id="saving"></p>
             </div>
             <div id="info">
                 Placar: <span id="placar">3 &times; 2</span><br>
                 Pontos acumulados: <span id="pontos">6</span><br>
-                <span id="msg"></span>
             </div>
         `;
         // coleta referências para os inputs
@@ -163,16 +165,16 @@ class BolaoJogo extends HTMLElement {
                 jid: this.jid,
                 palpite: this.get_palpite()
             };
-            let $msg = this.$root.querySelector("#msg");
-            $msg.innerText = "salvando...";
+            let $saving = this.$root.querySelector("#saving");
+            $saving.innerText = "salvando...";
             let resp = await salva_palpite(ud.email, ud.pidx, palpite);
             if (resp.ts) {
-                $msg.innerText = "palpite salvo";
+                $saving.innerText = "palpite salvo";
                 setTimeout(() => {
-                    $msg.innerText = "";
+                    $saving.innerText = "";
                 }, 1000);
             } else {
-                $msg.innerText = "ERRO ao salvar palpite!";
+                $saving.innerText = "ERRO ao salvar palpite!";
             }
             const event = new CustomEvent('novo-placar', {detail: resp});
             this.dispatchEvent(event);
