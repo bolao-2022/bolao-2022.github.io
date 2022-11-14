@@ -2,7 +2,9 @@ import { watch_login_status, login, logout } from './auth.js';
 import { API } from './config.js';
 import * as views from './views.js';
 import { now_ts } from './utils.js';
-import { userdata } from './bolao.js';
+import * as bolao from './bolao.js';
+
+const BASE_URL = '/~dalton/fb'
 
 // identify main element in DOM
 let $main = document.querySelector("main");
@@ -10,6 +12,12 @@ let $main = document.querySelector("main");
 main();
 
 function main() {
+
+    // redireciona pra URL indicando o pidx
+    let pidx = get_pidx();
+    if (! /\d+$/.test(pidx)) {
+       location = '/~dalton/fb/#/0'; 
+    }
 
     // instala o watch do status de login
     // - invoca go_to_route cada vez que o usuário loga
@@ -21,7 +29,9 @@ function main() {
     // - invoca go_to_route()
     window.addEventListener('popstate', function (event) {
         console.log(location.href);
-        go_to_route();
+        if (pidx != get_pidx()) {
+            location.reload(true);
+        }
     });
 
     var mq = window.matchMedia("(max-width: 1200px)")
@@ -34,6 +44,11 @@ function main() {
       }
     }
     mq.addListener(myFunction)
+}
+
+function get_pidx() {
+    let pidx = location.hash.split("/")[1];
+    return pidx;
 }
 
 let _cron_interval_handler;
@@ -50,7 +65,13 @@ function view_header(udata) {
     }
 
     // exibe email do usuário
-    $perfil.innerText = udata.email;
+    $perfil.innerText = udata.perfil?.nick;
+    $perfil.addEventListener('click', () => {
+        let pidx = `${(Number(get_pidx()) + 1) % udata.num_perfis}`;
+        location = `/~dalton/fb/#/${pidx}`; 
+    });
+
+    // se já tem interval handler, retorna
     if (_cron_interval_handler) {
         return;
     }
@@ -72,7 +93,7 @@ function view_header(udata) {
 }
 
 function view_login_screen() {
-    view_header();
+    view_header(null);
     $main.innerHTML = `
         <div id="center-float">
             <p>Sign in with Google</p>
@@ -108,21 +129,26 @@ async function view_main() {
     // ajusta as views da view base/principal do site
     // - header: contador + perfil + menu
     // - main: tabela da copa + placares + palpites + pontos + rascunho
-    //await new Promise(res => {
-    //    function checa_token() {
-    //        if (window.idToken) res();
-    //        setTimeout(checa_token, 100);
-    //    }
-    //    checa_token();
-    //});
-    let udata = await userdata();
+    let pidx = get_pidx();
+    let udata = await bolao.userdata(pidx);
     view_header(udata);
     $main.innerHTML = '';
     for (let jid=1; jid<=64; jid++) {
         let $jogo = document.createElement("bolao-jogo");
         $jogo.setAttribute("jid", `${jid}`);
-        $jogo.palpite1 = 13;
-        $jogo.palpite2 = 45;
+        let rascunho = udata?.perfil?.rascunho || {};
+        if (Object.keys(rascunho).includes(String(jid))) {
+            let [palp1, palp2] = udata.perfil.rascunho[jid].split(" ");
+            $jogo.palpite1 = palp1;
+            $jogo.palpite2 = palp2;
+        } else {
+            $jogo.palpite1 = "0";
+            $jogo.palpite2 = "0";
+        }
+        $jogo.addEventListener('novo-placar', async function (ev) {
+            let res = await bolao.salva_palpite(udata.email, udata.pidx, ev.detail);
+            console.log(res);
+        });
         $main.appendChild($jogo);
     }
     let $logout = document.querySelector("#logout");

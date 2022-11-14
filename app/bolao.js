@@ -6,18 +6,21 @@ let tabela = await (await fetch(`${FILES}/tabela-${tabela_versao}.json`)).json()
 window.tabela = tabela;
 
 let _userdata;
-export async function userdata(reload = false) {
+export async function userdata(pidx, reload = false) {
     if (!_userdata || reload) {
         // espera haver token disponível
         await new Promise(res => {
             function checa_token() {
-                if (window.idToken) res();
+                if (window.idToken) {
+                    res();
+                    return;
+                }
                 setTimeout(checa_token, 100);
             }
             checa_token();
         });
         let headers = {"Authorization": `Bearer ${window.idToken}`};
-        let data = await (await fetch(`${API}`, {headers:headers})).json();
+        let data = await (await fetch(`${API}?pidx=${pidx}`, {headers:headers})).json();
         _userdata = preprocess_userdata(data);
         window.ud = _userdata;
     }
@@ -32,6 +35,18 @@ function preprocess_userdata(_userdata) {
     return _userdata;
 }
 
+export async function salva_palpite(email, pidx, palpite) {
+    console.log(`SALVAR palpite: ${palpite}`);
+    console.log(`NO PERFIL: ${email}:${pidx}`);
+    let headers = {"Authorization": `Bearer ${window.idToken}`};
+    let data = await (await fetch(`${API}/palpites`, {
+        method: 'POST', 
+        headers: headers,
+        body: JSON.stringify({pidx, ...palpite})
+    })).json();
+    return data;
+
+}
 
 export function get_jogo(jid) {
     let jogo = tabela.jogos[jid];
@@ -78,7 +93,7 @@ class BolaoJogo extends HTMLElement {
                 <div id="pais1">
                     <span id="sigla1">${this.jogo.time1}</span>
                     <span id="nome1">${this.jogo.nome1}</span>
-                    <img id="band1" src="${this.jogo.band1}?tx=w_30"> 
+                    <img id="band1" src="${this.jogo.band1}?tx=w_30">
                 </div>
                 <div id="inputs">
                     <input id="input1" size="2" value="${this.palpite1}">
@@ -98,6 +113,7 @@ class BolaoJogo extends HTMLElement {
             <div id="info">
                 Placar: <span id="placar">3 &times; 2</span><br>
                 Pontos acumulados: <span id="pontos">6</span><br>
+                <span id="msg"></span>
             </div>
         `;
         // coleta referências para os inputs
@@ -115,15 +131,52 @@ class BolaoJogo extends HTMLElement {
 
         // configura componente
         $input1.addEventListener("keydown", ev => {
+            if (['Backspace', 'Tab'].includes(ev.key)) {
+                return;
+            }
             if (ev.key.length == 1 && !/^\d$/.test(ev.key)) {
+                // desabilita qualquer caractere que não seja um
+                // dígito, sem proibir o uso de teclas de controle
+                ev.preventDefault();
+            }
+            if ($input1.selectionStart == 0 && $input1.selectionEnd == 2) {
+                // permite substituir completamente um palpite cujo
+                // texto esteja selecionado
+                return;
+            }
+            if ($input1.value.length == 2) {
+                // desabilita a entrada, quando o palpite já tem
+                // 2 caracteres
                 ev.preventDefault();
             }
         });
+
         $input1.addEventListener("keyup", ev => {
             $input1.value = $input1.value.replace(/\D/g, '');
+            let novo_palpite = Number($input1.value).toFixed(0);
+            if (novo_palpite.length <= 2) {
+                $input1.value = novo_palpite;
+            }
         });
-        let change_handler = ev => {
-            console.log(`novo placar jogo ${this.jid}: ${this.get_placar()}`);
+        let change_handler = async ev => {
+            let palpite = {
+                jid: this.jid,
+                palpite: this.get_palpite()
+            };
+            let $msg = this.$root.querySelector("#msg");
+            $msg.innerText = "salvando...";
+            let resp = await salva_palpite(ud.email, ud.pidx, palpite);
+            if (resp.ts) {
+                $msg.innerText = "palpite salvo";
+                setTimeout(() => {
+                    $msg.innerText = "";
+                }, 1000);
+            } else {
+                $msg.innerText = "ERRO ao salvar palpite!";
+            }
+            const event = new CustomEvent('novo-placar', {detail: resp});
+            this.dispatchEvent(event);
+            console.log(`novo palpite ${this.jid}: ${this.get_palpite()}`);
         };
         $input1.addEventListener("change", change_handler);
         $input2.addEventListener("change", change_handler);
@@ -132,7 +185,7 @@ class BolaoJogo extends HTMLElement {
         }
     }
 
-    get_placar() {
+    get_palpite() {
         return `${this.$input1.value} ${this.$input2.value}`
     }
 
@@ -177,4 +230,3 @@ class BolaoJogo extends HTMLElement {
 }
 
 customElements.define("bolao-jogo", BolaoJogo);
-
