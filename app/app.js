@@ -133,18 +133,19 @@ async function view_main() {
     let udata = await bolao.userdata(pidx);
     view_header(udata);
     $main.innerHTML = '';
+    let rascunho = udata?.perfil?.rascunho || {};
+    let palpites = await bolao.get_palpites();
+    let id_perfil = `${udata.email}:${udata.pidx}`;
+    let $jogos = [];
     for (let jid=1; jid<=64; jid++) {
         let $jogo = document.createElement("bolao-jogo");
+        $jogo.pidx = pidx;
+        $jogos.push($jogo);
         $jogo.setAttribute("jid", `${jid}`);
-        let rascunho = udata?.perfil?.rascunho || {};
-        if (Object.keys(rascunho).includes(String(jid))) {
-            let [palp1, palp2] = udata.perfil.rascunho[jid].split(" ");
-            $jogo.palpite1 = palp1;
-            $jogo.palpite2 = palp2;
-        } else {
-            $jogo.palpite1 = "0";
-            $jogo.palpite2 = "0";
-        }
+        let palpite = (await bolao.get_palpite_salvo(udata.email, pidx, String(jid)))
+                      || (await bolao.get_palpite_rascunho(pidx, String(jid)))
+                      || "0 0";
+        [$jogo.palpite1, $jogo.palpite2] = palpite.split(" ");
         $jogo.addEventListener('novo-palpite', async function (ev) {
             let res = await bolao.salva_palpite(udata.email, udata.pidx, ev.detail);
             console.log(res);
@@ -155,6 +156,9 @@ async function view_main() {
     $logout.addEventListener("click", () => {
         logout();
     });
+    setInterval(() => {
+        $jogos.forEach($j => { $j.update(); });
+    }, 500);
 }
 
 function view_not_found() {

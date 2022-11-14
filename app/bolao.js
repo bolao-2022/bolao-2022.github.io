@@ -2,10 +2,24 @@ import { FILES, MARGEM_SEGURANCA_PALPITES, tabela_versao } from './config.js';
 import { now_ts } from './utils.js';
 
 import * as bolao from './bolao.js';
-let tabela = await (await fetch(`${FILES}/tabela-${tabela_versao}.json`)).json()
+window.bolao = bolao;
+
+// lê arquivo da tabela
+let tabela = await (await fetch(`${FILES}/tabela-fake-0.json`)).json()
 window.tabela = tabela;
 tabela.jogos[1].placar = "3 1";
 tabela.jogos[2].placar = "1 2";
+
+// lê arquivo de palpites
+let _palpites;
+export async function get_palpites() {
+    if (!_palpites) {
+        _palpites = await (await fetch(`${FILES}/palpites-fake-0.json`)).json();
+        window.palpites = _palpites;
+    }
+
+    return _palpites;
+}
 
 let _userdata;
 export async function userdata(pidx, reload = false) {
@@ -24,7 +38,7 @@ export async function userdata(pidx, reload = false) {
         let headers = {"Authorization": `Bearer ${window.idToken}`};
         let data = await (await fetch(`${API}?pidx=${pidx}`, {headers:headers})).json();
         _userdata = preprocess_userdata(data);
-        window.ud = _userdata;
+        window.udata = _userdata;
     }
     return _userdata;
 }
@@ -35,6 +49,26 @@ function preprocess_userdata(_userdata) {
     // atualiza countdown global
     window.deadline_ts = now_ts() + _userdata.tempo - MARGEM_SEGURANCA_PALPITES;
     return _userdata;
+}
+
+window.get_palpite_salvo = get_palpite_salvo;
+export async function get_palpite_salvo(email, pidx, jid) {
+    let palpites = await bolao.get_palpites();
+    if (jid in palpites) {
+        // jogo encerrado pra palpites
+        let id_perfil = `${email}:${pidx}`;
+        return palpites[jid][id_perfil];
+    }
+    return null;
+}
+
+window.get_palpite_rascunho = get_palpite_rascunho;
+export async function get_palpite_rascunho(pidx, jid) {
+    let rascunho = (await bolao.userdata(pidx))?.perfil?.rascunho || {};
+    if (Object.keys(rascunho).includes(String(jid))) {
+        return rascunho[jid];
+    }
+    return null;
 }
 
 export async function salva_palpite(email, pidx, palpite) {
@@ -95,9 +129,9 @@ class BolaoJogo extends HTMLElement {
                     <img id="band1" src="${this.jogo.band1}?tx=w_30">
                 </div>
                 <div id="inputs">
-                    <input id="input1" size="2" value="${this.palpite1}">
+                    <input id="input1" size="2" value="${this.palpite1}" disabled>
                     &times;
-                    <input id="input2" size="2" value="${this.palpite2}"><br>
+                    <input id="input2" size="2" value="${this.palpite2}" disabled><br>
                 </div>
                 <div id="pais2">
                     <img id="band2" src="${this.jogo.band2}?tx=w_30">
@@ -136,6 +170,10 @@ class BolaoJogo extends HTMLElement {
         let $input2 = this.$input2;
 
         // configura componente
+        if (!this.get_placar()) {
+            $input1.disabled = false;
+            $input2.disabled = false;
+        }
         $input1.addEventListener("keydown", ev => {
             if (['Backspace', 'Tab'].includes(ev.key)) {
                 return;
@@ -172,14 +210,17 @@ class BolaoJogo extends HTMLElement {
             };
             let $saving = this.$root.querySelector("#saving");
             $saving.innerText = "salvando...";
-            let resp = await salva_palpite(ud.email, ud.pidx, palpite);
+            let udata = await userdata(this.pidx);
+            let resp = await salva_palpite(udata.email, udata.pidx, palpite);
             if (resp.ts) {
                 $saving.innerText = "palpite salvo";
                 setTimeout(() => {
                     $saving.innerText = "";
                 }, 1000);
             } else {
-                $saving.innerText = "ERRO ao salvar palpite!";
+                $saving.innerHTML = `<span class="error-msg">ERRO: ${resp.error}</span>`;
+                $input1.value = '';
+                $input2.value = '';
             }
             const event = new CustomEvent('novo-palpite', {detail: resp});
             this.dispatchEvent(event);
@@ -187,18 +228,19 @@ class BolaoJogo extends HTMLElement {
         };
         $input1.addEventListener("change", change_handler);
         $input2.addEventListener("change", change_handler);
-        if (!this.placar) {
-            setInterval(() => {this.update()}, 500);
-        }
+    }
+
+    get_placar() {
+        return tabela.jogos[this.jid].placar;
     }
 
     get_palpite() {
         return `${this.$input1.value} ${this.$input2.value}`
     }
 
-    esta_editavel() {
+    is_editavel() {
         // STUB
-        return !window.site_bloqueado;
+        return !this.get_placar() && !window.site_bloqueado;
     }
 
     update() {
@@ -210,15 +252,14 @@ class BolaoJogo extends HTMLElement {
         let $info = this.$info;
 
         // atualiza placar
-        let placar = tabela.jogos[this.jid].placar;
+        let placar = this.get_placar();
         if (placar) {
             $info.style.display = 'block';
             let [placar1, placar2] = placar.split(" ");
             $placar1.innerText = placar1;
             $placar2.innerText = placar2;
             // atualiza pontos
-            // TODO:
-            console.log('atualizar pontos aqui! por ora, apenas stub');
+            // STUB: atualizar pontos aqui
             this.$pontos = 6;
         }
 
@@ -230,12 +271,10 @@ class BolaoJogo extends HTMLElement {
         }
 
         // atualiza editabilidade
-        if (this.esta_editavel()) {
-            console.log("editável");
+        if (this.is_editavel()) {
             $input1.removeAttribute("disabled");
             $input2.removeAttribute("disabled");
         } else {
-            console.log("não editável");
             $input1.setAttribute("disabled", true);
             $input2.setAttribute("disabled", true);
         }

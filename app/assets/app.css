@@ -134,6 +134,11 @@ main {
   text-align: center;
 }
 
+.error-msg {
+  color: red;
+  font-weight: bold;
+}
+
 /* efeitos */
 .alerts-border {
     border: 3px #ff0000 solid;
