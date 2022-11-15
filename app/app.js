@@ -159,6 +159,50 @@ async function view_main() {
     setInterval(() => {
         $jogos.forEach($j => { $j.update(); });
     }, 500);
+
+    function filtra_jogos(criterios) {
+        $jogos.forEach($j => {
+            $j.style.display = "block";
+            if (criterios.grupo && !$j.jogo.grupo.startsWith(criterios.grupo)) {
+                $j.style.display = "none";
+            }
+            let resp = $j.jogo.hora < criterios.prazo;
+            if (criterios.prazo && $j.jogo.hora > criterios.prazo) {
+                $j.style.display = "none";
+            }
+        });
+    }
+
+    let filtros = [];
+    let criterios = {};
+    document.body.addEventListener('keyup', ev => {
+        if (ev.key.length == 1 && /^[abcdefghoqsxABCDEFGHOQSX]+$/.test(ev.key)) {
+            let grupo = ev.key.toUpperCase();
+            if (criterios.grupo == grupo) {
+                delete criterios.grupo;
+            } else {
+                criterios.grupo = ev.key.toUpperCase();
+            }
+        }
+        else if (ev.key.length == 1 && ev.key == '*') {
+            delete criterios.grupo;
+        }
+        else if (ev.key.length == 1 && /^[0-9]+$/.test(ev.key)) {
+            // mostrar todos nos próximos N dias
+            delete criterios.grupo;
+            delete criterios.state;
+            let N = Number(ev.key);
+            if (N === 0) {
+                delete criterios.prazo;
+            } else {
+                let now = new Date();
+                let prazo = new Date(now.getTime() + N * 24 * 60 * 60 * 1000);
+                criterios.prazo = prazo.toISOString().slice(0, 10);
+            }
+        }
+        filtra_jogos(criterios);
+    }); 
+
 }
 
 function view_not_found() {
