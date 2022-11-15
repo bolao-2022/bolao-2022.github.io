@@ -3,13 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <title></title>
-  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="assets/app.css">
+  <script type="module" src="app.js"></script>
 </head>
 <body>
-  <h1>Bolão 2022!</h1>
-
-  <div></div>
-
-  <script src="app.js"></script>
+  <header>
+    <h1>Bolão 2022</h1>
+    <p id="cron"></p>
+    <div>
+      <input id="perfil"></input>
+      <button id="muda-perfil">Muda perfil</button>
+      <button id="logout">Logout</button>
+    </div>
+  </header>
+  <main>
+    <div id="center-float">
+      <img style="width: 40px; height: auto;" src="assets/progress.gif" alt="">
+    </div>
+  </main>
 </body>
 </html>

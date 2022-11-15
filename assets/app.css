@@ -1,0 +1,159 @@
+* { margin: 0; padding: 0; }
+
+body {
+  display: grid;
+  grid-template-areas:
+    "header"
+    "content";
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+}
+
+header {
+  border: 0px solid blue;
+  grid-area: header;
+  padding: 0.5em;
+  background: #eee;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: minmax(max-content, 11em) 1fr minmax(max-content, 11em);
+  align-items: center;
+  justify-content: space-between;
+}
+
+header div {
+  justify-self: end;
+  text-align: center;
+}
+
+
+header p {
+  text-align: center;
+}
+
+main {
+  height: *;
+  grid-area: content;
+  border: 0px solid red;
+  overflow: hidden scroll;
+}
+
+#center-float {
+    height: 60%;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+}
+
+#center-float p {
+    border: 1px solid gray;
+    box-shadow: 4px 4px 12px 0px rgba(0,0,0,0.45);
+    padding: 1em;
+    cursor: pointer;
+}
+
+/* bolao-jogo */
+
+            /* <style> */
+                div {
+                    margin: 0.5em 0;
+                }
+                #card {
+                    margin: 4px 0 0 0;
+                    padding: 0 12px;
+                    border: 1px solid #82b7b7;
+                    border-bottom: 0;
+                    background-color: #bee;
+                    border-radius: 12px 12px 0 0;
+                    display: grid;
+                    grid-template-columns: 1fr 20% max-content 20% 1fr;
+                    align-items: center;
+                }
+                #pais1 { text-align: right; }
+                #pais2 { text-align: left; }
+                #inputs {
+                  text-align: center; 
+                  padding: 0 1em;
+                }
+                #inputs input { text-align: center; font-size: 100%;}
+                img, div span{
+                    margin: 0 0.4em;
+                    vertical-align: middle;
+                }
+                input {
+                    display: inline;
+                    text-align: center;
+                    background-color: white;
+                    border: 3px solid transparent;
+                    border-radius: 5px;
+                }
+                input:focus {
+                    background-color: white;
+                    border: 3px solid red;
+                    outline: none;
+                }
+                input:disabled {
+                    background-color: #bee;
+                    color: #4a5f5f;
+                    font-weight: bold;
+                }
+                #info-msg {
+                    text-align: center;
+                    margin: 0 0 1em 0;
+                    padding: 0.5em 12px;
+                    border: 1px solid #82b7b7;
+                    border-top: 0;
+                    background-color: #dff;
+                    border-radius: 0 0 12px 12px;
+                }
+                #info-msg.off {
+                    background-color: #dff;
+                    max-height: 0;
+                    display: none;
+                }
+                #card.off {
+                    border-radius: 12px;
+                    border: 1px solid black;
+                }
+                @media (max-width: 700px) {
+                    #card {
+                        grid-template-columns: 1fr max-content 1fr;
+                        font-size: 120%;
+                    }
+                    #jid, #extras, #nome1, #nome2 {
+                        display: none;
+                    }
+                }
+                @media not (max-width: 700px) {
+                    #sigla1, #sigla2 {
+                        display: none;
+                    }
+                }
+            /* </style> */
+
+#perfil {
+  display: block;
+  color: #33aabb;
+  padding: 2px;
+  font-size: 1.1rem;
+  margin: 0 0 6px 0;
+}
+
+#saving {
+  text-align: center;
+}
+
+.error-msg {
+  color: red;
+  font-weight: bold;
+}
+
+/* efeitos */
+.alerts-border {
+    border: 3px #ff0000 solid;
+    animation: blink 0.5s;
+    animation-iteration-count: 60;
+}
+
+@keyframes blink { 50% { border-color:yellow ; }  }
+
