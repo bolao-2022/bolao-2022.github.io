@@ -1,7 +1,7 @@
 import { watch_login_status, login, logout } from './auth.js';
 import { API } from './config.js';
 import * as views from './views.js';
-import { now_ts, seconds2str } from './utils.js';
+import { now_ts, seconds2str, parse_token } from './utils.js';
 import * as bolao from './bolao.js';
 
 const BASE_URL = '/~dalton/fb'
@@ -32,6 +32,26 @@ function main() {
         if (pidx != get_pidx()) {
             location.reload(true);
         }
+    });
+
+    window.addEventListener("focus", function() {
+        // usuário retornou à aba
+        let tempo_off = new Date().getTime() - window._blur_time;
+        console.log(`Tempo afastado: ${tempo_off / 1000} segundos.`);
+        let exp = parse_token(window.idToken).exp;
+        let now = now_ts();
+        let tempo_restante = exp - now;
+        if (tempo_restante > 0) {
+            console.log(`Token válido. Vence em ${tempo_restante.toFixed(0)} segundos.`);
+        } else {
+            console.log(`Token vencido! Usuário precisa fazer novo login.`);
+            logout();
+        }
+    });
+
+    window.addEventListener("blur", function() {
+        // usuário vai sair da aba
+        window._blur_time = new Date().getTime();
     });
 
     var mq = window.matchMedia("(max-width: 1200px)")
