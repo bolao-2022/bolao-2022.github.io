@@ -1,7 +1,7 @@
 import { watch_login_status, login, logout } from './auth.js';
 import { API } from './config.js';
 import * as views from './views.js';
-import { now_ts } from './utils.js';
+import { now_ts, seconds2str } from './utils.js';
 import * as bolao from './bolao.js';
 
 const BASE_URL = '/~dalton/fb'
@@ -105,7 +105,7 @@ function view_header(udata) {
             $cron.innerText = "site bloqueado";
             $cron.classList.remove('alerts-border');
         } else {
-            $cron.innerText = String(Math.floor(window.tempo));
+            $cron.innerText = seconds2str(window.tempo);
             if (window.tempo < 10) {
                 $cron.classList.add('alerts-border');
             }
