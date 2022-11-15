@@ -158,7 +158,7 @@ async function view_main() {
     let palpites = await bolao.get_palpites();
     let id_perfil = `${udata.email}:${udata.pidx}`;
     let $jogos = [];
-    for (let jid=1; jid<=64; jid++) {
+    for (let jid=1; jid<=48; jid++) {
         let $jogo = document.createElement("bolao-jogo");
         $jogo.pidx = pidx;
         $jogos.push($jogo);
