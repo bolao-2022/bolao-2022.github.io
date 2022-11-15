@@ -55,18 +55,39 @@ let _cron_interval_handler;
 function view_header(udata) {
     // elementos dinâmicos do header
     let $perfil = document.querySelector("#perfil");
+    let $muda_perfil = document.querySelector("#muda-perfil");
     let $cron = document.querySelector("#cron");
 
     // pro caso de não haver usuário logado/detectado
     if (!udata?.email) {
-        $perfil.innerText = "";
+        $perfil.value = "";
         $cron.innerText = "";
         return;
     }
 
     // exibe email do usuário
-    $perfil.innerText = udata.perfil?.nick;
-    $perfil.addEventListener('click', () => {
+    $perfil.value = udata.perfil?.nick;
+    $perfil.addEventListener('change', async () => {
+        let old_nick = udata.perfil?.nick;
+        $perfil.classList.add('alerts-border');
+        let report = await bolao.salva_nick(get_pidx(), $perfil.value);
+        $perfil.classList.remove('alerts-border');
+        if (report.ok) {
+            $perfil.blur();
+        } else {
+            alert(`ERRO: ${report.error}`);
+            $perfil.value = old_nick;
+        }
+    });
+
+    $perfil.addEventListener('keyup', (ev) => {
+        if (ev.key.length == 1) {
+            // evita que caracteres digitados sejam tomados como comandos de filtragem
+            ev.stopPropagation();
+        }
+    });
+
+    $muda_perfil.addEventListener('click', () => {
         let pidx = `${(Number(get_pidx()) + 1) % udata.num_perfis}`;
         location = `/~dalton/fb/#/${pidx}`; 
     });

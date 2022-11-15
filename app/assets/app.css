@@ -132,8 +132,11 @@ main {
             /* </style> */
 
 #perfil {
-  color: gray;
-  padding: 0 0 8px 0;
+  display: block;
+  color: #33aabb;
+  padding: 2px;
+  font-size: 1.1rem;
+  margin: 0 0 6px 0;
 }
 
 #saving {

@@ -71,6 +71,16 @@ export async function get_palpite_rascunho(pidx, jid) {
     return null;
 }
 
+export async function salva_nick(pidx, nick) {
+    let headers = {"Authorization": `Bearer ${window.idToken}`};
+    let report = await (await fetch(`${API}/nick`, {
+        method: 'POST', 
+        headers: headers,
+        body: JSON.stringify({pidx, nick})
+    })).json();
+    return report;
+}
+
 export async function salva_palpite(email, pidx, palpite) {
     console.log(`SALVAR palpite: ${palpite}`);
     console.log(`NO PERFIL: ${email}:${pidx}`);
