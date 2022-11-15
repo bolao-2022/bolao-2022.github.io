@@ -37,6 +37,9 @@ function main() {
 
     window.addEventListener("focus", function() {
         // usuário retornou à aba
+        if (!window._blur_time) {
+            return;
+        }
         let tempo_off = new Date().getTime() - window._blur_time;
         console.log(`Tempo afastado: ${tempo_off / 1000} segundos.`);
         let exp = parse_token(window.idToken).exp;
@@ -52,7 +55,9 @@ function main() {
 
     window.addEventListener("blur", function() {
         // usuário vai sair da aba
-        window._blur_time = new Date().getTime();
+        if (window.idToken) {
+            window._blur_time = new Date().getTime();
+        }
     });
 
     var mq = window.matchMedia("(max-width: 1200px)")
