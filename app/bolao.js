@@ -106,6 +106,10 @@ export function get_jogo(jid) {
         }
     // adiciona objeto Date
     jogo._hora = new Date(Date.parse(jogo.hora));
+    jogo._localeDate = jogo._hora.toLocaleDateString('pt-BR', {day:'numeric', month:'short', year:'numeric', weekday:'long'});
+    jogo._localeDate = jogo._localeDate.charAt(0).toUpperCase() + jogo._localeDate.slice(1);
+    jogo._localeTime = jogo._hora.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+
     // adiciona urls das bandeiras
     jogo.band1 = tabela.paises[jogo?.time1]?.band;
     jogo.band2 = tabela.paises[jogo?.time2]?.band;
@@ -113,6 +117,8 @@ export function get_jogo(jid) {
     // adiciona nomes dos países
     jogo.nome1 = tabela.paises[jogo?.time1]?.nome;
     jogo.nome2 = tabela.paises[jogo?.time2]?.nome;
+
+    // adiciona hora pra screen
     return tabela.jogos[jid];
 }
 
@@ -147,7 +153,8 @@ class BolaoJogo extends HTMLElement {
                     <span id="sigla2">${this.jogo.time2}</span>
                 </div>
                 <div id="extras" style="text-align: right;">
-                    <span id="hora">${this.jogo._hora.toDateString()}</span><br>
+                    <span id="hora">${this.jogo._localeDate}</span><br>
+                    <span id="hora">${this.jogo._localeTime}</span><br>
                     <span id="local">${this.jogo.local}</span>
                 </div>
                 <div></div>
