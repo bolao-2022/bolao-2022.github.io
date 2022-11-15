@@ -16,10 +16,16 @@ header {
   background: #eee;
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: minmax(max-content, 11em) 1fr minmax(max-content, 11em);
   align-items: center;
   justify-content: space-between;
 }
+
+header div {
+  justify-self: end;
+  text-align: center;
+}
+
 
 header p {
   text-align: center;
@@ -127,7 +133,7 @@ main {
 
 #perfil {
   color: gray;
-  font-size: 80%;
+  padding: 0 0 8px 0;
 }
 
 #saving {
