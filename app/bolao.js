@@ -7,8 +7,6 @@ window.bolao = bolao;
 // lê arquivo da tabela
 let tabela = await (await fetch(`${FILES}/tabela-0.json`)).json()
 window.tabela = tabela;
-tabela.jogos[1].placar = "3 1";
-tabela.jogos[2].placar = "1 2";
 
 // lê arquivo de palpites
 let _palpites;
@@ -179,12 +177,9 @@ class BolaoJogo extends HTMLElement {
         let $input1 = this.$input1;
         let $input2 = this.$input2;
 
-        // configura componente
-        if (!this.get_placar()) {
-            $input1.disabled = false;
-            $input2.disabled = false;
-        }
-        $input1.addEventListener("keydown", ev => {
+        let input_keydown_handler = (ev) => {
+            let $inputX = ev.srcElement;
+
             if (['Backspace', 'Tab'].includes(ev.key)) {
                 return;
             }
@@ -193,27 +188,29 @@ class BolaoJogo extends HTMLElement {
                 // dígito, sem proibir o uso de teclas de controle
                 ev.preventDefault();
             }
-            if ($input1.selectionStart == 0 && $input1.selectionEnd == 2) {
+            if ($inputX.selectionStart == 0 && $inputX.selectionEnd == 2) {
                 // permite substituir completamente um palpite cujo
                 // texto esteja selecionado
                 return;
             }
-            if ($input1.value.length == 2) {
+            if ($inputX.value.length == 2) {
                 // desabilita a entrada, quando o palpite já tem
                 // 2 caracteres
                 ev.preventDefault();
             }
-        });
+        }
 
-        $input1.addEventListener("keyup", ev => {
-            $input1.value = $input1.value.replace(/\D/g, '');
-            let novo_palpite = Number($input1.value).toFixed(0);
+        let input_keyup_handler = (ev) => {
+            let $inputX = ev.srcElement;
+            $inputX.value = $inputX.value.replace(/\D/g, '');
+            let novo_palpite = Number($inputX.value).toFixed(0);
             if (novo_palpite.length <= 2) {
-                $input1.value = novo_palpite;
+                $inputX.value = novo_palpite;
             }
-        });
+            ev.stopPropagation();
+        }
 
-        let change_handler = async ev => {
+        let change_handler = async (ev) => {
             let palpite = {
                 jid: this.jid,
                 palpite: this.get_palpite()
@@ -223,6 +220,7 @@ class BolaoJogo extends HTMLElement {
             let udata = await userdata(this.pidx);
             let resp = await salva_palpite(udata.email, udata.pidx, palpite);
             if (resp.ts) {
+                udata.perfil.rascunho[this.jid] = resp.palpite;
                 $saving.innerText = "palpite salvo";
                 setTimeout(() => {
                     $saving.innerText = "";
@@ -236,6 +234,17 @@ class BolaoJogo extends HTMLElement {
             this.dispatchEvent(event);
             console.log(`novo palpite ${this.jid}: ${this.get_palpite()}`);
         };
+
+        // configura componente
+        if (!this.get_placar()) {
+            $input1.disabled = false;
+            $input2.disabled = false;
+        }
+
+        $input1.addEventListener("keydown", input_keydown_handler);
+        $input2.addEventListener("keydown", input_keydown_handler);
+        $input1.addEventListener("keyup", input_keyup_handler);
+        $input2.addEventListener("keyup", input_keyup_handler);
         $input1.addEventListener("change", change_handler);
         $input2.addEventListener("change", change_handler);
     }
