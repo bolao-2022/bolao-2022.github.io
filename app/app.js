@@ -77,12 +77,19 @@ function view_header(udata) {
     let $perfil = document.querySelector("#perfil");
     let $muda_perfil = document.querySelector("#muda-perfil");
     let $cron = document.querySelector("#cron");
+    let $logout = document.querySelector("#logout");
 
     // pro caso de não haver usuário logado/detectado
     if (!udata?.email) {
-        $perfil.value = "";
+        $perfil.style.display = "none";
         $cron.innerText = "";
+        $muda_perfil.style.display = "none";
+        $logout.style.display = "none";
         return;
+    } else {
+        $perfil.style.display = "block";
+        $muda_perfil.style.display = "inline-block";
+        $logout.style.display = "inline-block";
     }
 
     // exibe email do usuário
@@ -177,6 +184,11 @@ async function view_main() {
     // - main: tabela da copa + placares + palpites + pontos + rascunho
     let pidx = get_pidx();
     let udata = await bolao.userdata(pidx);
+    if (udata.code == '400') {
+        alert("Usuário não cadastrado no bolão. Entre em contato com a organização.");
+        logout();
+        return;
+    }
     view_header(udata);
     $main.innerHTML = '';
     let rascunho = udata?.perfil?.rascunho || {};
