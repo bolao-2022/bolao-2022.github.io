@@ -17,7 +17,7 @@ function main() {
     // redireciona pra URL indicando o pidx
     let pidx = get_pidx();
     if (! /\d+$/.test(pidx)) {
-       location = '${BASE_PATH}/#/0'; 
+       location = `${BASE_PATH}/#/0`;
     }
 
     // instala o watch do status de login
