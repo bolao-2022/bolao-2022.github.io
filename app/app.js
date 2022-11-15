@@ -100,6 +100,11 @@ function view_header(udata) {
         }
     });
 
+    // se não tem perfis, desativa botão muda-perfilreload
+    if (udata.num_perfis < 2) {
+        $muda_perfil.style.display = "none";
+    }
+
     $perfil.addEventListener('keyup', (ev) => {
         if (ev.key.length == 1) {
             // evita que caracteres digitados sejam tomados como comandos de filtragem
