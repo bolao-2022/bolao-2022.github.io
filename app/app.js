@@ -4,7 +4,8 @@ import * as views from './views.js';
 import { now_ts, seconds2str, parse_token } from './utils.js';
 import * as bolao from './bolao.js';
 
-const BASE_URL = '/~dalton/fb'
+const BASE_PATH = location.host.startsWith('www.dsc.ufcg.edu.br') ?  '/~dalton/fb' : '';
+
 
 // identify main element in DOM
 let $main = document.querySelector("main");
@@ -16,7 +17,7 @@ function main() {
     // redireciona pra URL indicando o pidx
     let pidx = get_pidx();
     if (! /\d+$/.test(pidx)) {
-       location = '/~dalton/fb/#/0'; 
+       location = '${BASE_PATH}/#/0'; 
     }
 
     // instala o watch do status de login
@@ -121,7 +122,7 @@ function view_header(udata) {
 
     $muda_perfil.addEventListener('click', () => {
         let pidx = `${(Number(get_pidx()) + 1) % udata.num_perfis}`;
-        location = `/~dalton/fb/#/${pidx}`; 
+        location = `${BASE_PATH}/#/${pidx}`; 
     });
 
     // se já tem interval handler, retorna
