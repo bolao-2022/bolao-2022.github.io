@@ -3,6 +3,7 @@
 build*
 node_modules
 package*
+bolao-2022.github.io*
 
 # Created by https://www.toptal.com/developers/gitignore/api/vim
 # Edit at
