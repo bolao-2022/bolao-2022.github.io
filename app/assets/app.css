@@ -10,7 +10,7 @@ body {
 }
 
 header {
-  border: 2px solid blue;
+  border: 0px solid blue;
   grid-area: header;
   padding: 0.5em;
   background: #eee;
@@ -34,7 +34,7 @@ header p {
 main {
   height: *;
   grid-area: content;
-  border: 2px solid red;
+  border: 0px solid red;
   overflow: hidden scroll;
 }
 
