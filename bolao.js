@@ -5,14 +5,14 @@ import * as bolao from './bolao.js';
 window.bolao = bolao;
 
 // lê arquivo da tabela
-let tabela = await (await fetch(`${FILES}/tabela-0.json`)).json()
+let tabela = await (await fetch(`${FILES}/tabela-1.json`)).json()
 window.tabela = tabela;
 
 // lê arquivo de palpites
 let _palpites;
 export async function get_palpites() {
     if (!_palpites) {
-        _palpites = await (await fetch(`${FILES}/palpites-fake-0.json`)).json();
+        _palpites = await (await fetch(`${FILES}/palpites-0.json`)).json();
         window.palpites = _palpites;
     }
 

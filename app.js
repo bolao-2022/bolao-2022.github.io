@@ -195,6 +195,18 @@ async function view_main() {
         logout();
         return;
     }
+    if (udata.code == '403') {
+        alert("Servidor fora do ar. Entre em contato com a organização.");
+        console.error(udata);
+        logout();
+        return;
+    }
+    if ('code' in udata) {
+        console.error(udata);
+        alert("Servidor fora do ar. Entre em contato com a organização.");
+        logout();
+        return;
+    }
     view_header(udata);
     $main.innerHTML = '';
     let rascunho = udata?.perfil?.rascunho || {};
