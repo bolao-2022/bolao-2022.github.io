@@ -72,7 +72,7 @@ export async function get_palpite_rascunho(pidx, jid) {
 export async function salva_nick(pidx, nick) {
     let headers = {"Authorization": `Bearer ${window.idToken}`};
     let report = await (await fetch(`${API}/nick`, {
-        method: 'POST', 
+        method: 'POST',
         headers: headers,
         body: JSON.stringify({pidx, nick})
     })).json();
@@ -84,7 +84,7 @@ export async function salva_palpite(email, pidx, palpite) {
     console.log(`NO PERFIL: ${email}:${pidx}`);
     let headers = {"Authorization": `Bearer ${window.idToken}`};
     let data = await (await fetch(`${API}/palpites`, {
-        method: 'POST', 
+        method: 'POST',
         headers: headers,
         body: JSON.stringify({pidx, ...palpite})
     })).json();
@@ -184,36 +184,46 @@ class BolaoJogo extends HTMLElement {
         let $input1 = this.$input1;
         let $input2 = this.$input2;
 
-        let input_keydown_handler = (ev) => {
+        let beforeinput_handler = async (ev) => {
             let $inputX = ev.srcElement;
 
-            if (['Backspace', 'Tab'].includes(ev.key)) {
+            // se não é caractere: permite
+            // (pq é algum controle: tab, shift-tab, backspace, etc)
+            if (!ev.data?.length) {
                 return;
             }
-            if (ev.key.length == 1 && !/^\d$/.test(ev.key)) {
-                // desabilita qualquer caractere que não seja um
-                // dígito, sem proibir o uso de teclas de controle
+
+            // ... é caractere!
+
+            // se não é dígito: cancela
+            if (/^\D$/.test(ev.data)) {
                 ev.preventDefault();
-            }
-            if ($inputX.selectionStart == 0 && $inputX.selectionEnd == 2) {
-                // permite substituir completamente um palpite cujo
-                // texto esteja selecionado
                 return;
             }
+
+            // ... é dígito
+
+            // se o value (ou parte dele) está selecionado: permite
+            // (pq é apenas a substituição de um dígito)
+            if ($inputX.selectionEnd > $inputX.selectionStart) {
+                return;
+            }
+
+            // se o input já tem dois dígitos no value: cancela
             if ($inputX.value.length == 2) {
-                // desabilita a entrada, quando o palpite já tem
-                // 2 caracteres
                 ev.preventDefault();
+                return;
             }
         }
 
-        let input_keyup_handler = (ev) => {
+        let input_handler = async (ev) => {
             let $inputX = ev.srcElement;
-            $inputX.value = $inputX.value.replace(/\D/g, '');
-            let novo_palpite = Number($inputX.value).toFixed(0);
-            if (novo_palpite.length <= 2) {
-                $inputX.value = novo_palpite;
-            }
+
+            // elimina 0 à esquerda
+            $inputX.value = Number($inputX.value).toFixed(0);
+        }
+
+        let keyup_handler = (ev) => {
             ev.stopPropagation();
         }
 
@@ -248,12 +258,21 @@ class BolaoJogo extends HTMLElement {
             $input2.disabled = false;
         }
 
-        $input1.addEventListener("keydown", input_keydown_handler);
-        $input2.addEventListener("keydown", input_keydown_handler);
-        $input1.addEventListener("keyup", input_keyup_handler);
-        $input2.addEventListener("keyup", input_keyup_handler);
+        // limita o que pode ser digitado nos inputs de palpites
+        $input1.addEventListener("beforeinput", beforeinput_handler);
+        $input2.addEventListener("beforeinput", beforeinput_handler);
+
+        // ajusta o valor após cada edição
+        $input1.addEventListener("input", input_handler);
+        $input2.addEventListener("input", input_handler);
+
+        // processa após o usuário concluir a ediçãi
         $input1.addEventListener("change", change_handler);
         $input2.addEventListener("change", change_handler);
+
+        // evita que teclas nos inputs sejam interpretadas como filtragem
+        $input1.addEventListener("keyup", keyup_handler);
+        $input2.addEventListener("keyup", keyup_handler);
     }
 
     get_placar() {

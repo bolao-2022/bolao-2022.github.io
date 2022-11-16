@@ -127,7 +127,7 @@ function view_header(udata) {
 
     $muda_perfil.addEventListener('click', () => {
         let pidx = `${(Number(get_pidx()) + 1) % udata.num_perfis}`;
-        location = `${BASE_PATH}/#/${pidx}`; 
+        location = `${BASE_PATH}/#/${pidx}`;
     });
 
     // se já tem interval handler, retorna
@@ -265,7 +265,7 @@ async function view_main() {
             }
         }
         filtra_jogos(criterios);
-    }); 
+    });
 
 }
 
