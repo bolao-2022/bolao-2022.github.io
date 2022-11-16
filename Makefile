@@ -1,9 +1,19 @@
+ifdef v
+	VERSAO := $(v)
+else
+	VERSAO := dev
+endif
+
 help:
 	@echo "uso: make [ build | run | clean | deploy-test | deploy-gcloud ]"
 
 build: $(wildcard app/**)
 	mkdir -p build
 	cp -r app/* build/
+	cd build; \
+	for a in $$(find . -type f | grep -v 'checksum.*txt'); do \
+      sha1sum $$a | tee -a checksums.txt ; \
+    done | sha1sum - | cut -f 1 -d ' ' | tee checksum.txt; \
 	touch build
 
 run: build
@@ -23,5 +33,10 @@ test: venv
 deploy-test: build
 	rsync -arv --delete --delete-excluded build/  dsc:public_html/fb/
 
-deploy-gcloud: build
-	gcloud app deploy build/app.yaml --project bolao-2022 -q -v dev
+deploy-github: build
+	git clone http://github.com/bolao-2022/bolao-2022.github.io
+	cp -r build/* bolao-2022.github.io/
+	cd bolao-2022.github.io; \
+    git add .; \
+    git commit -m "versao ${VERSAO}"; \
+    git push; \
