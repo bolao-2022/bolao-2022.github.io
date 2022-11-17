@@ -266,9 +266,18 @@ class BolaoJogo extends HTMLElement {
         $input1.addEventListener("input", input_handler);
         $input2.addEventListener("input", input_handler);
 
-        // processa após o usuário concluir a ediçãi
-        $input1.addEventListener("change", change_handler);
-        $input2.addEventListener("change", change_handler);
+        // processa após o usuário concluir a edição
+        if (/^.*iphone.*$/gi.test(window.navigator?.platform)) {
+            // deve ser um iphone
+            console.log(">>>>>>>>>> iPhone");
+            $input1.addEventListener("blur", change_handler);
+            $input2.addEventListener("blur", change_handler);
+        } else {
+            // não deve ser um iphone
+            console.log(">>>>>>>>>> NÃO é iPhone");
+            $input1.addEventListener("change", change_handler);
+            $input2.addEventListener("change", change_handler);
+        }
 
         // evita que teclas nos inputs sejam interpretadas como filtragem
         $input1.addEventListener("keyup", keyup_handler);
