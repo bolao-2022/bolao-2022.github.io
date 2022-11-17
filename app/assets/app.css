@@ -39,6 +39,11 @@ main {
   overflow: hidden scroll;
 }
 
+versao-site {
+  font-size: 90%;
+  color: gray;
+}
+
 #center-float {
     height: 60%;
     display: grid;
