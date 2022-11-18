@@ -6,33 +6,22 @@ import * as bolao from './bolao.js';
 
 const BASE_PATH = location.host.startsWith('www.dsc.ufcg.edu.br') ?  '/~dalton/fb' : '';
 
-
-// identify main element in DOM
-let $main = document.querySelector("main");
-
 main();
 
 function main() {
 
     // redireciona pra URL indicando o pidx
     let pidx = get_pidx();
-    if (! /\d+$/.test(pidx)) {
-       location = `${BASE_PATH}/#/0`;
-    }
 
     // instala o watch do status de login
-    // - invoca go_to_route cada vez que o usuário loga
+    // - invoca go_to_location_route cada vez que o usuário loga
     // - invoca view_login_screen cada vez que usuário desloga
     // user is logged in or call view_login_screen otherwise
-    watch_login_status(go_to_route, view_login_screen);
+    watch_login_status(go_to_location_route, view_login_screen);
 
-    // instala watch para mudanças da URL no browser
-    // - invoca go_to_route()
-    window.addEventListener('popstate', function (event) {
+    window.addEventListener('hashchange', function (event) {
         console.log(location.href);
-        if (pidx != get_pidx()) {
-            location.reload(true);
-        }
+        go_to_location_route();
     });
 
     window.addEventListener("focus", function() {
@@ -73,12 +62,12 @@ function main() {
 }
 
 function get_pidx() {
-    let pidx = location.hash.split("/")[1];
-    return pidx;
+    return localStorage.getItem('pidx') || '0';
 }
 
 let _cron_interval_handler;
 function view_header(udata) {
+    udata = udata || window.udata;
     // elementos dinâmicos do header
     let $perfil = document.querySelector("#perfil");
     let $muda_perfil = document.querySelector("#muda-perfil");
@@ -125,9 +114,10 @@ function view_header(udata) {
         }
     });
 
-    $muda_perfil.addEventListener('click', () => {
+    $muda_perfil.addEventListener('click', async () => {
         let pidx = `${(Number(get_pidx()) + 1) % udata.num_perfis}`;
-        location = `${BASE_PATH}/#/${pidx}`;
+        localStorage.setItem('pidx', pidx);
+        location.reload(true);
     });
 
     // se já tem interval handler, retorna
@@ -168,28 +158,39 @@ function view_login_screen() {
     });
 }
 
-function go_to_route() {
+function go_to_location_route() {
     // ativa as views para a rota atual (url) no browser
-    let path = location.hash.split("/").slice(1);
-    if (path[0] === 'p') {
+    let route = location.hash || "#/";
+    let path = route.split("/").slice(1);
+    let view_selector = path[0];
+    if (view_selector === 'p') {
         let perfil = path[1];
         views.view_perfil(perfil);
         return;
-    } else if (path[0] === 'j') {
+    } else if (view_selector === 'j') {
         let jogo = path[1];
         views.view_jogo(jogo);
         return;
-    } else {
+    } else if (view_selector === '') {
+        let jogo = path[1];
         view_main();
+        return;
+    } else {
+        view_not_found(route.slice(1));
     }
 }
 
-async function view_main() {
+async function view_main(reload = false) {
     // ajusta as views da view base/principal do site
     // - header: contador + perfil + menu
     // - main: tabela da copa + placares + palpites + pontos + rascunho
+    let $main = document.querySelector("main");
+    let $perfil = document.querySelector("#perfil");
+    $main.innerHTML = '';
+    $perfil.value = '';
     let pidx = get_pidx();
-    let udata = await bolao.userdata(pidx);
+    let udata = await bolao.userdata(pidx, reload);
+    view_header(udata);
     if (udata.code == '400') {
         alert("Usuário não cadastrado no bolão. Entre em contato com a organização.");
         logout();
@@ -207,8 +208,6 @@ async function view_main() {
         logout();
         return;
     }
-    view_header(udata);
-    $main.innerHTML = '';
     let rascunho = udata?.perfil?.rascunho || {};
     let palpites = await bolao.get_palpites();
     let id_perfil = `${udata.email}:${udata.pidx}`;
@@ -281,8 +280,11 @@ async function view_main() {
 
 }
 
-function view_not_found() {
+function view_not_found(route) {
+    let $main = document.querySelector("main");
     $main.innerHTML = `
-        <h1>não achado!</h1>
+        <div id="center-float">
+            <p>página não encontrada: ${route}</p>
+        </div>
     `;
 }
