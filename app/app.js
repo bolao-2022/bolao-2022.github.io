@@ -143,6 +143,7 @@ function view_header(udata) {
 
 function view_login_screen() {
     view_header(null);
+    let $main = document.querySelector("main");
     $main.innerHTML = `
         <div id="center-float">
             <p>Sign in with Google</p>
