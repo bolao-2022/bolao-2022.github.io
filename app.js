@@ -89,6 +89,10 @@ function view_header(udata) {
 
     // exibe email do usuário
     $perfil.value = udata.perfil?.nick;
+    $perfil.addEventListener('focus', async () => {
+        $perfil.setSelectionRange(0, $perfil.value.length)
+
+    });
     $perfil.addEventListener('change', async () => {
         let old_nick = udata.perfil?.nick;
         $perfil.classList.add('alerts-border');
