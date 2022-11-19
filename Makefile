@@ -34,6 +34,7 @@ deploy-test: build
 	rsync -arv --delete --delete-excluded build/  dsc:public_html/fb/
 
 deploy-github: build
+	rm -rf bolao-2022.github.io
 	git clone http://github.com/bolao-2022/bolao-2022.github.io
 	cp -r build/* bolao-2022.github.io/
 	cd bolao-2022.github.io; \
