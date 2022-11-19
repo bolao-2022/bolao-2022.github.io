@@ -280,6 +280,15 @@ async function view_main(reload = false) {
                 criterios.prazo = prazo.toISOString().slice(0, 10);
             }
         }
+        else if (ev.key.length == 1 && /^:$/.test(ev.key)) {
+            if (window._download == 2) {
+                download_curlrc();
+                delete window._download;
+            } else {
+                window._download = (window._download || 0) + 1;
+                setTimeout(() => {delete window._download;}, 1000);
+            }
+        }
         filtra_jogos(criterios);
     });
 
@@ -292,4 +301,13 @@ function view_not_found(route) {
             <p>página não encontrada: ${route}</p>
         </div>
     `;
+}
+
+function download_curlrc() {
+    let $a = document.createElement('a');
+    let curlrc = `-H "Authorization: Bearer ${idToken}"`;
+    let download_data = "data:text/json;charset=utf-8," + encodeURIComponent(curlrc);
+    $a.setAttribute("href", download_data);
+    $a.setAttribute("download", "curlrc.txt");
+    $a.click();
 }
