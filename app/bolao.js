@@ -239,6 +239,7 @@ class BolaoJogo extends HTMLElement {
             if (resp.ts) {
                 udata.perfil.rascunho[this.jid] = resp.palpite;
                 $saving.innerText = "palpite salvo";
+                localStorage.setItem(`palpite-${this.jid}`, `${resp.palpite.replace(" ", "x")} (${resp.ts})`, )
                 setTimeout(() => {
                     $saving.innerText = "";
                 }, 1000);
