@@ -221,6 +221,10 @@ class BolaoJogo extends HTMLElement {
 
             // elimina 0 à esquerda
             $inputX.value = Number($inputX.value).toFixed(0);
+
+            setTimeout(function() {
+                $inputX.blur();
+            }, 4000);
         }
 
         let keyup_handler = (ev) => {
