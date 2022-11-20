@@ -345,10 +345,10 @@ async function view_jogo(jid) {
         let $table = document.createElement("table");
         $table.innerHTML = `
             <tr>
-                <th>id</th>
-                <th>nome</th>
-                <th>palpite</th>
-                <th>pontos</th>
+              <th id="col-id">id</th>
+              <th id="col-nome">nome</th>
+              <th id="col-palpite">palpite</th>
+              <th id="col-pontos">pontos</th>
             </tr>
         `;
         tabela.forEach(([id_hash, nick, palpite, pontos]) => {
@@ -362,6 +362,14 @@ async function view_jogo(jid) {
             $table.appendChild($tr);
         });
         $main.appendChild($table);
+
+        // adiciona controllers pra ordenar
+        let $col_id = $table.querySelector("#col-nome");
+        let order = 1;
+        $col_id.addEventListener('click', ev => {
+            order = -1 * order;
+            tabela.sort((l1, l2) => l1[1].toUpperCase() < l2[1].toUpperCase() ? -order : order)
+        });
     }
 
     let palpites = await bolao.get_palpites();
