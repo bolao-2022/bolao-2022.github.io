@@ -1,5 +1,27 @@
 * { margin: 0; padding: 0; }
 
+table {
+  width: 100%;
+  border-radius: 1em;
+  border: 1px solid #82b7b7;
+  overflow: hidden;
+  padding: 0;
+}
+
+tr, td, th {
+  border: 0 solid;
+  padding: 20px;
+}
+
+
+th {
+  text-align: left;
+}
+
+tr:nth-child(odd){
+  background-color: #dff;
+}
+
 body {
   display: grid;
   grid-template-areas:
@@ -37,6 +59,7 @@ main {
   grid-area: content;
   border: 0px solid red;
   overflow: hidden scroll;
+  padding: 1em;
 }
 
 versao-site {

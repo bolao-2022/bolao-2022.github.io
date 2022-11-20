@@ -12,7 +12,7 @@ window.tabela = tabela;
 let _palpites;
 export async function get_palpites() {
     if (!_palpites) {
-        _palpites = await (await fetch(`${FILES}/palpites-0-0.json`)).json();
+        _palpites = await (await fetch(`${FILES}/palpites-1.json?a=3`)).json();
         window.palpites = _palpites;
     }
 
