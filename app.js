@@ -364,9 +364,9 @@ async function view_jogo(jid) {
         $main.appendChild($table);
 
         // adiciona controllers pra ordenar
-        let $col_id = $table.querySelector("#col-nome");
+        let $col_nome = $table.querySelector("#col-nome");
         let order = 1;
-        $col_id.addEventListener('click', ev => {
+        $col_nome.addEventListener('click', ev => {
             order = -1 * order;
             tabela.sort((l1, l2) => l1[1].toUpperCase() < l2[1].toUpperCase() ? -order : order)
         });
