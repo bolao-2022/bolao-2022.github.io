@@ -365,6 +365,7 @@ async function view_jogo(jid) {
 
         // adiciona controllers pra ordenar
         let $col_nome = $table.querySelector("#col-nome");
+        window.$col_nome = $col_nome;
         let order = 1;
         $col_nome.addEventListener('click', async ev => {
             console.log('clicou!!!!');
