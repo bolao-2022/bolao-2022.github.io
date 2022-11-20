@@ -367,6 +367,7 @@ async function view_jogo(jid) {
         let $col_nome = $table.querySelector("#col-nome");
         let order = 1;
         $col_nome.addEventListener('click', async ev => {
+            console.log('clicou!!!!');
             order = -1 * order;
             tabela.sort((l1, l2) => l1[1].toUpperCase() < l2[1].toUpperCase() ? -order : order)
             await renderiza_tabela();
