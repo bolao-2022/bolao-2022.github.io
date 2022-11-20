@@ -369,6 +369,7 @@ async function view_jogo(jid) {
         $col_nome.addEventListener('click', ev => {
             order = -1 * order;
             tabela.sort((l1, l2) => l1[1].toUpperCase() < l2[1].toUpperCase() ? -order : order)
+            await renderiza_tabela();
         });
     }
 
