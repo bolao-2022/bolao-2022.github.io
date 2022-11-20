@@ -330,51 +330,78 @@ async function view_jogo(jid) {
             <div id="info-msg">
                 <div id="info" style="display: none;">
                     Placar: <span id="placar1"></span>&times;<span id="placar2"></span><br>
-                    Pontos acumulados: <span id="pontos">6</span><br>
+                    Pontos acumulados: <span id="pontos">?</span><br>
                 </div>
             </div>
       </div>
+      <table id="tab-palpites">
+        <tr>
+          <th id="col-id">id</th>
+          <th id="col-nome">nome</th>
+          <th id="col-palpite">palpite</th>
+          <th id="col-pontos">pontos</th>
+        </tr>
+      </table>
     `;
 
-    window.renderiza_tabela = renderiza_tabela;
-    function renderiza_tabela() {
-        let $old_table = $main.querySelector("table");
-        if ($old_table) {
-            $old_table.remove();
+    let palpites = await bolao.get_palpites();
+    window.palpites = palpites;
+
+    let tab_palpites = [];
+    Object.keys(palpites).forEach(id_hash => {
+        let nick = palpites[id_hash].nick || "";
+        let palpite = palpites[id_hash].palpites[jid];
+        let pontos = palpites[id_hash].pontos[jid];
+        tab_palpites.push([id_hash, nick, palpite, pontos]);
+    })
+    window.tab_palpites = tab_palpites;
+    let $tab_palpites = $main.querySelector("#tab-palpites");
+    let $col_nome = $tab_palpites.querySelector("#col-nome");
+    let $col_palpite = $tab_palpites.querySelector("#col-palpite");
+    update_tabela();
+
+    // adiciona controllers pra ordenar a tabela
+    window.update_tabela = update_tabela;
+    window.$t = $tab_palpites;
+    function update_tabela() {
+        console.log('atualizando a tab_palpites!!!!');
+        for (let i=$tab_palpites.rows.length - 1; i>0; i--) {
+            let $row = $tab_palpites.rows[i];
+            $row.remove();
         }
-        let $table = document.createElement("table");
-        $table.innerHTML = `
-            <tr>
-                <th>id</th>
-                <th>nome</th>
-                <th>palpite</th>
-                <th>pontos</th>
-            </tr>
-        `;
-        tabela.forEach(([id_hash, nick, palpite, pontos]) => {
+
+        tab_palpites.forEach(([id_hash, nick, palpite, pontos]) => {
             let $tr = document.createElement('tr');
             $tr.innerHTML = `
                 <td>${id_hash.slice(0, 5)}</td>
                 <td>${nick}</td>
-                <td>${palpite.replace(" ", " x ") || "indisponível"}</td>
+                <td>${palpite?.replace(" ", " x ") || "indisponível"}</td>
                 <td>${pontos}</td>
             `;
-            $table.appendChild($tr);
+            $tab_palpites.appendChild($tr);
         });
-        $main.appendChild($table);
+        $main.appendChild($tab_palpites);
     }
 
-    let palpites = await bolao.get_palpites();
-    let tabela = [];
-    window.tabela = tabela;
-    Object.keys(palpites).forEach(id_hash => {
-        let nick = palpites[id_hash].nick || "";
-        let palpite = palpites[id_hash].palpites[jid];
-        let pontos = "";
-        tabela.push([id_hash, nick, palpite, pontos]);
-        tabela = tabela.sort((lin1, lin2) => ('' + lin1[1]).localeCompare(lin1[1]));
-    })
-    renderiza_tabela();
+
+    function ordena_tabela(ev) {
+        console.log('clicou pra ordenar!!!!');
+        tab_palpites.sort(function (l1, l2) {
+            if (l1[_coluna] == '') {
+                return 1;
+            } else if (l2[_coluna] == '') {
+                return -1;
+            }
+            return ordem * l1[_coluna].localeCompare(l2[_coluna]);
+        });
+        ordem = -1 * ordem;
+        update_tabela();
+    }
+
+    let ordem = 1;
+    let _coluna = 1;
+    $col_nome.addEventListener('click', ev => {_coluna = 1; ordena_tabela(ev)});
+    $col_palpite.addEventListener('click', ev => {_coluna = 2; ordena_tabela(ev)});
 
 }
 

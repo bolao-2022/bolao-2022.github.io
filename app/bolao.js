@@ -5,7 +5,7 @@ import * as bolao from './bolao.js';
 window.bolao = bolao;
 
 // lê arquivo da tabela
-let tabela = await (await fetch(`${FILES}/tabela-1.json`)).json()
+let tabela = await (await fetch(`${FILES}/tabela-1.json?v=2`)).json()
 window.tabela = tabela;
 
 // lê arquivo de palpites
@@ -14,6 +14,13 @@ export async function get_palpites() {
     if (!_palpites) {
         _palpites = await (await fetch(`${FILES}/palpites-1.json?a=3`)).json();
         window.palpites = _palpites;
+        Object.keys(_palpites).forEach(id_perfil => {
+            _palpites[id_perfil].pontos = {};
+            Object.keys(_palpites[id_perfil].palpites).forEach(jid => {
+                _palpites[id_perfil].pontos[jid] = -1; // buscar do ranking ou da tabela com o placar
+            });
+        });
+        delete _palpites['4fcc1b514ce7345b5e02d388403838f0a371bf2d'];
     }
 
     return _palpites;
@@ -164,7 +171,7 @@ class BolaoJogo extends HTMLElement {
             <div id="info-msg">
                 <div id="info" style="display: none;">
                     Placar: <span id="placar1"></span>&times;<span id="placar2"></span><br>
-                    Pontos acumulados: <span id="pontos">6</span><br>
+                    Pontos acumulados: <span id="pontos">?</span><br>
                 </div>
             </div>
         `;
