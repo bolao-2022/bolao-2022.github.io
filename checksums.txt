@@ -2811,3 +2811,15 @@ fe58e3238039a2ce7c4e11ed5cbffe263f680870  ./auth.js
 2e1b560951a9f02a4e04a50e25011b16c6f1d924  ./index.html
 98485e36c872ac21e08a1dcff76e90976959fea5  ./rotas.md
 da39a3ee5e6b4b0d3255bfef95601890afd80709  ./build
+87327b85aa08554c7c52eb9ef608db03ec92a72b  ./assets/app.css
+7536dd94426266899d82d18ce2e0c6a4b79d81c9  ./assets/progress.gif
+043e4d8c45eb18ba3fb0a124ef0c12c44a02577a  ./get.html
+36aaa83776b853ad476c0fa23f31e1d9b1319676  ./bolao.js
+cabeaa1f124905b2df34bbc571c029c03179cd9f  ./utils.js
+24b8feff588b9215f480a181cfa15efa75ffc06d  ./app.js
+b19885afa3a7a330b9c56aac984d5c66b32837d4  ./config.js
+fe58e3238039a2ce7c4e11ed5cbffe263f680870  ./auth.js
+1eb250f3fce5ea7b6fd380fe5a396c93bd69b12f  ./views.js
+9cf29714ed74ae4cfb6d6587b0de197b203eae63  ./index.html
+98485e36c872ac21e08a1dcff76e90976959fea5  ./rotas.md
+da39a3ee5e6b4b0d3255bfef95601890afd80709  ./build
