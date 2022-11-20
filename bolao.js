@@ -221,6 +221,10 @@ class BolaoJogo extends HTMLElement {
 
             // elimina 0 à esquerda
             $inputX.value = Number($inputX.value).toFixed(0);
+
+            setTimeout(function() {
+                $inputX.blur();
+            }, 4000);
         }
 
         let keyup_handler = (ev) => {
@@ -239,6 +243,7 @@ class BolaoJogo extends HTMLElement {
             if (resp.ts) {
                 udata.perfil.rascunho[this.jid] = resp.palpite;
                 $saving.innerText = "palpite salvo";
+                localStorage.setItem(`palpite-${this.jid}`, `${resp.palpite.replace(" ", "x")} (${resp.ts})`, )
                 setTimeout(() => {
                     $saving.innerText = "";
                 }, 1000);
