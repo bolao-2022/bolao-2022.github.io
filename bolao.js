@@ -334,7 +334,7 @@ class BolaoJogo extends HTMLElement {
     }
 
     pontos_acumulados() {
-         return calcula_pontos(tabela.jogos[this.jid].placar, this.get_palpite());
+         return 0;
     }
 
     get_palpite() {
