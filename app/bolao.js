@@ -12,7 +12,7 @@ window.tabela = tabela;
 let _palpites;
 export async function get_palpites() {
     if (!_palpites) {
-        _palpites = await (await fetch(`${FILES}/palpites-0.json`)).json();
+        _palpites = await (await fetch(`${FILES}/palpites-0-0.json`)).json();
         window.palpites = _palpites;
     }
 
@@ -222,7 +222,12 @@ class BolaoJogo extends HTMLElement {
             // elimina 0 à esquerda
             $inputX.value = Number($inputX.value).toFixed(0);
 
-            setTimeout(function() {
+            if (this._save_handler) {
+                clearTimeout(this._save_handler);
+                delete this._save_handler;
+            }
+
+            this._save_handler = setTimeout(function() {
                 $inputX.blur();
             }, 4000);
         }
@@ -262,6 +267,10 @@ class BolaoJogo extends HTMLElement {
             $input1.disabled = false;
             $input2.disabled = false;
         }
+
+        this.$inputs.addEventListener('click', ev => {
+            ev.stopPropagation();
+        });
 
         // limita o que pode ser digitado nos inputs de palpites
         $input1.addEventListener("beforeinput", beforeinput_handler);
