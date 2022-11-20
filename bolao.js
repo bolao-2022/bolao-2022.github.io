@@ -17,9 +17,7 @@ export async function get_palpites() {
         Object.keys(_palpites).forEach(id_perfil => {
             _palpites[id_perfil].pontos = {};
             Object.keys(_palpites[id_perfil].palpites).forEach(jid => {
-                let placar = tabela['jogos'][jid].placar;
-                let palpite = _palpites[id_perfil].palpites[jid];
-                _palpites[id_perfil].pontos[jid] = calcula_pontos(placar, palpite); // buscar do ranking ou da tabela com o placar
+                _palpites[id_perfil].pontos[jid] = -1; // buscar do ranking ou da tabela com o placar
             });
         });
         delete _palpites['4fcc1b514ce7345b5e02d388403838f0a371bf2d'];
@@ -57,32 +55,6 @@ function preprocess_userdata(_userdata) {
     window.deadline_ts = now_ts() + _userdata.tempo - MARGEM_SEGURANCA_PALPITES;
     return _userdata;
 }
-
-function calcula_pontos(placar, palpite) {
-    function ganhador(p) {
-        if (p[0] > p[1]) {
-            return "time1 ganhou";
-        }
-        else if (p[0] < p[1]) {
-            return "time2 ganhour";
-        }
-
-        return "empate";
-    }
-
-    placar = placar.split(" ");
-    palpite = palpite.split(" ");
-    if (placar[0] == palpite[0] && placar[1] == palpite[1]) {
-        return 6;
-    } else if (ganhador(palpite) == ganhador(placar) && 
-                (placar[0] == palpite[0] || placar[1] == palpite[1])) {
-        return 3;
-    } else if (ganhador(palpite) == ganhador(placar)) {
-        return 2;
-    }
-    return 0;
-}
-
 
 window.get_palpite_salvo = get_palpite_salvo;
 export async function get_palpite_salvo(email, pidx, jid) {
@@ -199,7 +171,7 @@ class BolaoJogo extends HTMLElement {
             <div id="info-msg">
                 <div id="info" style="display: none;">
                     Placar: <span id="placar1"></span>&times;<span id="placar2"></span><br>
-                    Pontos acumulados: <span id="pontos">${this.pontos_acumulados()}</span><br>
+                    Pontos acumulados: <span id="pontos">?</span><br>
                 </div>
             </div>
         `;
@@ -333,8 +305,8 @@ class BolaoJogo extends HTMLElement {
         $input2.addEventListener("keyup", keyup_handler);
     }
 
-    pontos_acumulados() {
-         return 0;
+    get_placar() {
+        return tabela.jogos[this.jid].placar;
     }
 
     get_palpite() {
