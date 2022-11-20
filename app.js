@@ -337,7 +337,7 @@ async function view_jogo(jid) {
     `;
 
     window.renderiza_tabela = renderiza_tabela;
-    function renderiza_tabela() {
+    async function renderiza_tabela() {
         let $old_table = $main.querySelector("table");
         if ($old_table) {
             $old_table.remove();
@@ -366,7 +366,7 @@ async function view_jogo(jid) {
         // adiciona controllers pra ordenar
         let $col_nome = $table.querySelector("#col-nome");
         let order = 1;
-        $col_nome.addEventListener('click', ev => {
+        $col_nome.addEventListener('click', async ev => {
             order = -1 * order;
             tabela.sort((l1, l2) => l1[1].toUpperCase() < l2[1].toUpperCase() ? -order : order)
             await renderiza_tabela();
@@ -383,7 +383,7 @@ async function view_jogo(jid) {
         tabela.push([id_hash, nick, palpite, pontos]);
         tabela = tabela.sort((lin1, lin2) => ('' + lin1[1]).localeCompare(lin1[1]));
     })
-    renderiza_tabela();
+    await renderiza_tabela();
 
 }
 
