@@ -173,8 +173,8 @@ function go_to_location_route() {
         views.view_perfil(perfil);
         return;
     } else if (view_selector === 'j') {
-        let jogo = path[1];
-        views.view_jogo(jogo);
+        let jid = path[1];
+        view_jogo(jid);
         return;
     } else if (view_selector === '') {
         let jogo = path[1];
@@ -229,6 +229,9 @@ async function view_main(reload = false) {
         $jogo.addEventListener('novo-palpite', async function (ev) {
             let res = await bolao.salva_palpite(udata.email, udata.pidx, ev.detail);
             console.log(res);
+        });
+        $jogo.addEventListener('click', async ev => {
+            location = `${BASE_PATH}/#/j/${jid}`;
         });
         $main.appendChild($jogo);
     }
@@ -291,6 +294,87 @@ async function view_main(reload = false) {
         }
         filtra_jogos(criterios);
     });
+
+}
+
+async function view_jogo(jid) {
+    window.scrollTo(0,0); 
+    let jogo = bolao.get_jogo(jid);
+    let $main = document.querySelector("main");
+    $main.innerHTML = `
+      <div id="fixed">
+
+            <div id="card">
+                <div id="jid">Jogo ${jid}<br>Grupo ${jogo.grupo}</div>
+                <div id="pais1">
+                    <span id="sigla1">${jogo.time1}</span>
+                    <span id="nome1">${jogo.nome1}</span>
+                    <img id="band1" src="${jogo.band1}?tx=w_30">
+                </div>
+                <div id="inputs">
+                    s1
+                    &times;
+                    s2
+                </div>
+                <div id="pais2">
+                    <img id="band2" src="${jogo.band2}?tx=w_30">
+                    <span id="nome2">${jogo.nome2}</span>
+                    <span id="sigla2">${jogo.time2}</span>
+                </div>
+                <div id="extras" style="text-align: right;">
+                    <span id="hora">${jogo._localeDate}</span><br>
+                    <span id="hora">${jogo._localeTime}</span><br>
+                    <span id="local">${jogo.local}</span>
+                </div>
+            </div>
+            <div id="info-msg">
+                <div id="info" style="display: none;">
+                    Placar: <span id="placar1"></span>&times;<span id="placar2"></span><br>
+                    Pontos acumulados: <span id="pontos">6</span><br>
+                </div>
+            </div>
+      </div>
+    `;
+
+    window.renderiza_tabela = renderiza_tabela;
+    function renderiza_tabela() {
+        let $old_table = $main.querySelector("table");
+        if ($old_table) {
+            $old_table.remove();
+        }
+        let $table = document.createElement("table");
+        $table.innerHTML = `
+            <tr>
+                <th>id</th>
+                <th>nome</th>
+                <th>palpite</th>
+                <th>pontos</th>
+            </tr>
+        `;
+        tabela.forEach(([id_hash, nick, palpite, pontos]) => {
+            let $tr = document.createElement('tr');
+            $tr.innerHTML = `
+                <td>${id_hash.slice(0, 5)}</td>
+                <td>${nick}</td>
+                <td>${palpite.replace(" ", " x ") || "indisponível"}</td>
+                <td>${pontos}</td>
+            `;
+            $table.appendChild($tr);
+        });
+        $main.appendChild($table);
+    }
+
+    let palpites = await bolao.get_palpites();
+    let tabela = [];
+    window.tabela = tabela;
+    Object.keys(palpites).forEach(id_hash => {
+        let nick = palpites[id_hash].nick || "";
+        let palpite = palpites[id_hash].palpites[jid];
+        let pontos = "";
+        tabela.push([id_hash, nick, palpite, pontos]);
+        tabela = tabela.sort((lin1, lin2) => ('' + lin1[1]).localeCompare(lin1[1]));
+    })
+    renderiza_tabela();
 
 }
 
