@@ -125,7 +125,7 @@ export function get_jogo(jid) {
         }
     // adiciona objeto Date
     jogo._hora = new Date(Date.parse(jogo.hora));
-    jogo._passado = jogo._hora.getTime() < udata.hora;
+    jogo._eh_passado = (jogo._hora.getTime() / 1000) < udata.hora;
     jogo._localeDate = jogo._hora.toLocaleDateString('pt-BR', {day:'numeric', month:'short', year:'numeric', weekday:'long'});
     jogo._localeDate = jogo._localeDate.charAt(0).toUpperCase() + jogo._localeDate.slice(1);
     jogo._localeTime = jogo._hora.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
@@ -328,7 +328,7 @@ class BolaoJogo extends HTMLElement {
 
     is_editavel() {
         // STUB
-        if (Number(this.jogo.jid) < 5) {
+        if (this.jogo._eh_passado) {
             return false;
         }
         return !this.get_placar() && !window.site_bloqueado;
