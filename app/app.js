@@ -414,8 +414,8 @@ async function view_jogo(jid) {
 
 }
 
-async function view_ranking1(n = 2) {
-    // default n => ranking-2.json
+async function view_ranking1(n = 3) {
+    // default n => ranking-3.json
     window.scrollTo(0,0); 
     let $main = document.querySelector("main");
     $main.innerHTML = `
