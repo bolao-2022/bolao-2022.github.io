@@ -108,7 +108,6 @@ async function view_header(udata, reload = false) {
     if (!udata?.email) {
         // NÃO há usuário logado
         $perfil.setAttribute('type', 'hidden');
-        $cron.innerText = "";
         $muda_perfil.style.display = "none";
         $goto_ranking.style.display = "none";
         $logout.style.display = "none";
@@ -118,10 +117,10 @@ async function view_header(udata, reload = false) {
 
     // HÁ usuário logado
     $perfil.setAttribute('type', 'text');
-    $perfil.style.display = "block";
-    $goto_ranking.style.display = "inline-block";
     $muda_perfil.style.display = "inline-block";
+    $goto_ranking.style.display = "inline-block";
     $logout.style.display = "inline-block";
+    $cron.style.display = "block";
 
     // exibe email do usuário
     $home.addEventListener('click', async () => {
