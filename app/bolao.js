@@ -10,10 +10,10 @@ window.tabela = tabela;
 
 let _ranking1 = {};
 window.ranking1 = _ranking1;
-export async function get_ranking1(n = 3) {
-    // default n => ranking-3.json
+export async function get_ranking1(n = 4) {
+    // default n => ranking-4.json
     if (!_ranking1[n]) {
-        let filename = `ranking-${n}.json?v=5`;
+        let filename = `ranking-${n}.json?v=0`;
         let response = await fetch(`${FILES}/${filename}`);
         _ranking1[n] = await response.json();
     }
