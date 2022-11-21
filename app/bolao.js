@@ -5,7 +5,7 @@ import * as bolao from './bolao.js';
 window.bolao = bolao;
 
 // lê arquivo da tabela
-let tabela = await (await fetch(`${FILES}/tabela-3.json?v=2`)).json()
+let tabela = await (await fetch(`${FILES}/tabela-4.json?v=0`)).json()
 window.tabela = tabela;
 
 let _ranking1 = {};
