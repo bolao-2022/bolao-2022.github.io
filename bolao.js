@@ -5,13 +5,13 @@ import * as bolao from './bolao.js';
 window.bolao = bolao;
 
 // lê arquivo da tabela
-let tabela = await (await fetch(`${FILES}/tabela-2.json?v=2`)).json()
+let tabela = await (await fetch(`${FILES}/tabela-3.json?v=1`)).json()
 window.tabela = tabela;
 
 let _ranking1 = {};
 window.ranking1 = _ranking1;
-export async function get_ranking1(n = 2) {
-    // default n => ranking-2.json
+export async function get_ranking1(n = 3) {
+    // default n => ranking-3.json
     if (!_ranking1[n]) {
         let filename = `ranking-${n}.json?v=3`;
         let response = await fetch(`${FILES}/${filename}`);
