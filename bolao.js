@@ -315,7 +315,7 @@ class BolaoJogo extends HTMLElement {
 
     is_editavel() {
         // STUB
-        if (Number(this.jogo.jid) < 3) {
+        if (Number(this.jogo.jid) < 4) {
             return false;
         }
         return !this.get_placar() && !window.site_bloqueado;
