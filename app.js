@@ -414,7 +414,9 @@ async function view_jogo(jid) {
     let ordem = 1;
     let _coluna = 1;
     $col_nome.addEventListener('click', ev => {_coluna = 1; ordena_tabela(ev)});
+    $col_nome.classList.add('clicavel');
     $col_palpite.addEventListener('click', ev => {_coluna = 2; ordena_tabela(ev)});
+    $col_palpite.classList.add('clicavel');
 
 }
 
@@ -513,8 +515,11 @@ async function view_ranking1(n = 3) {
     }
 
     $col_nick.addEventListener('click', ev => {_coluna = 2; ordena_tabela(ev)});
+    $col_nick.classList.add('clicavel');
     $col_pontos.addEventListener('click', ev => {_coluna = 3; ordena_tabela(ev)});
+    $col_pontos.classList.add('clicavel');
     $col_rank.addEventListener('click', ev => {_coluna = 1; ordena_tabela(ev)});
+    $col_rank.classList.add('clicavel');
 }
 
 function view_not_found(route) {
