@@ -6,12 +6,12 @@ import * as bolao from './bolao.js';
 
 const BASE_PATH = location.host.startsWith('www.dsc.ufcg.edu.br') ?  '/~dalton/fb' : '';
 
+let _cron_interval_handler;
+let _header;
+
 main();
 
 function main() {
-
-    // redireciona pra URL indicando o pidx
-    let pidx = get_pidx();
 
     // instala o watch do status de login
     // - invoca go_to_location_route cada vez que o usuário loga
@@ -30,7 +30,6 @@ function main() {
             return;
         }
         let tempo_off = new Date().getTime() - window._blur_time;
-        console.log(`Tempo afastado: ${tempo_off / 1000} segundos.`);
         let exp = parse_token(window.idToken).exp;
         let now = now_ts();
         let tempo_restante = exp - now;
@@ -49,25 +48,55 @@ function main() {
         }
     });
 
-    var mq = window.matchMedia("(max-width: 1200px)")
-    function myFunction(mq) {
-      view_main();
-      if (mq.matches) { // If media query matches
-        document.body.style.backgroundColor = "red";
-      } else {
-        document.body.style.backgroundColor = "black";
-      }
+    //var mq = window.matchMedia("(max-width: 1200px)")
+    //function myFunction(mq) {
+    //  view_main();
+    //  if (mq.matches) { // If media query matches
+    //    document.body.style.backgroundColor = "red";
+    //  } else {
+    //    document.body.style.backgroundColor = "black";
+    //  }
+    //}
+    //mq.addListener(myFunction)
+}
+
+function go_to_location_route() {
+    // ativa as views para a rota atual (url) no browser
+    let route = location.hash || "#/";
+    let path = route.split("/").slice(1);
+    let view_selector = path[0];
+    if (view_selector === 'p') {
+        let perfil = path[1];
+        views.view_perfil(perfil);
+        return;
+    } else if (view_selector === 'j') {
+        let jid = path[1];
+        view_jogo(jid);
+        return;
+    } else if (view_selector === 'r1') {
+        let n = path[1];
+        view_ranking1(n);
+        return;
+    } else if (view_selector === '') {
+        let jogo = path[1];
+        view_main();
+        return;
+    } else {
+        view_not_found(route.slice(1));
     }
-    mq.addListener(myFunction)
 }
 
 function get_pidx() {
     return localStorage.getItem('pidx') || '0';
 }
 
-let _cron_interval_handler;
-function view_header(udata) {
-    udata = udata || window.udata;
+async function view_header(udata, reload = false) {
+    if (_header && !reload) {
+        return;
+    }
+    // ou não há _header ainda ou é reload
+    //let udata = await bolao.userdata(get_pidx());
+
     // elementos dinâmicos do header
     let $perfil = document.querySelector("#perfil");
     let $muda_perfil = document.querySelector("#muda-perfil");
@@ -76,18 +105,23 @@ function view_header(udata) {
     let $logout = document.querySelector("#logout");
     let $home = document.querySelector("#home");
 
-    // pro caso de não haver usuário logado/detectado
     if (!udata?.email) {
-        $perfil.style.display = "none";
+        // NÃO há usuário logado
+        $perfil.setAttribute('type', 'hidden');
         $cron.innerText = "";
         $muda_perfil.style.display = "none";
+        $goto_ranking.style.display = "none";
         $logout.style.display = "none";
+        $cron.style.display = "none";
         return;
-    } else {
-        $perfil.style.display = "block";
-        $muda_perfil.style.display = "inline-block";
-        $logout.style.display = "inline-block";
-    }
+    } 
+
+    // HÁ usuário logado
+    $perfil.setAttribute('type', 'text');
+    $perfil.style.display = "block";
+    $goto_ranking.style.display = "inline-block";
+    $muda_perfil.style.display = "inline-block";
+    $logout.style.display = "inline-block";
 
     // exibe email do usuário
     $home.addEventListener('click', async () => {
@@ -133,13 +167,7 @@ function view_header(udata) {
         location.reload(true);
     });
 
-    // se já tem interval handler, retorna
-    if (_cron_interval_handler) {
-        return;
-    }
-
-    // exibe e instala cronômetro
-    _cron_interval_handler = setInterval(() => {
+    function update_header() {
         window.tempo = window.deadline_ts - now_ts();
         if (window.tempo < 0) {
             window.site_bloqueado = true;
@@ -151,11 +179,16 @@ function view_header(udata) {
                 $cron.classList.add('alerts-border');
             }
         }
-    }, 1000);
+    }
+
+    // se já tem interval handler, retorna
+    if (!_cron_interval_handler) {
+        _cron_interval_handler = setInterval(update_header, 1000);
+    };
 }
 
 function view_login_screen() {
-    view_header(null);
+    view_header(null, true);
     let $main = document.querySelector("main");
     $main.innerHTML = `
         <div id="center-float">
@@ -172,60 +205,44 @@ function view_login_screen() {
     });
 }
 
-function go_to_location_route() {
-    // ativa as views para a rota atual (url) no browser
-    let route = location.hash || "#/";
-    let path = route.split("/").slice(1);
-    let view_selector = path[0];
-    if (view_selector === 'p') {
-        let perfil = path[1];
-        views.view_perfil(perfil);
-        return;
-    } else if (view_selector === 'j') {
-        let jid = path[1];
-        view_jogo(jid);
-        return;
-    } else if (view_selector === 'r1') {
-        let n = path[1];
-        view_ranking1(n);
-        return;
-    } else if (view_selector === '') {
-        let jogo = path[1];
-        view_main();
-        return;
-    } else {
-        view_not_found(route.slice(1));
-    }
+window.view_site_bloqueado = view_site_bloqueado;
+async function view_site_bloqueado(message) {
+    view_header(null);
+    let $main = document.querySelector("main");
+    $main.innerHTML = `
+        <div id="center-float">
+            <p>
+                ${message}
+            </p>
+        </div>
+    `;
 }
 
 async function view_main(reload = false) {
+    let pidx = get_pidx();
+    let udata = await bolao.userdata(pidx);
+    if ('code' in udata) {
+        let msg;
+        switch (udata.code) {
+            case '403':
+                msg = "O email usado não está cadastrado.";
+                break;
+            case '400':
+                msg = "Servidor fora do ar. Aguarde um pouco ou entre em contato com a organização.";
+                break;
+            default:
+                msg = "Servidor em manutenção. Aguarde um pouco ou entre em contato com a organização.";
+        }
+        view_site_bloqueado("Servidor fora do ar. Aguarde um pouco ou entre em contato com a organização.");
+        console.error(udata);
+        return;
+    }
+    view_header(udata);
     // ajusta as views da view base/principal do site
     // - header: contador + perfil + menu
     // - main: tabela da copa + placares + palpites + pontos + rascunho
     let $main = document.querySelector("main");
-    let $perfil = document.querySelector("#perfil");
     $main.innerHTML = '';
-    $perfil.value = '';
-    let pidx = get_pidx();
-    let udata = await bolao.userdata(pidx, reload);
-    view_header(udata);
-    if (udata.code == '400') {
-        alert("Usuário não cadastrado no bolão. Entre em contato com a organização.");
-        logout();
-        return;
-    }
-    if (udata.code == '403') {
-        alert("Servidor fora do ar. Entre em contato com a organização.");
-        console.error(udata);
-        logout();
-        return;
-    }
-    if ('code' in udata) {
-        console.error(udata);
-        alert("Servidor fora do ar. Entre em contato com a organização.");
-        logout();
-        return;
-    }
     let rascunho = udata?.perfil?.rascunho || {};
     let palpites = await bolao.get_palpites();
     let id_perfil = `${udata.email}:${udata.pidx}`;
@@ -241,7 +258,6 @@ async function view_main(reload = false) {
         [$jogo.palpite1, $jogo.palpite2] = palpite.split(" ");
         $jogo.addEventListener('novo-palpite', async function (ev) {
             let res = await bolao.salva_palpite(udata.email, udata.pidx, ev.detail);
-            console.log(res);
         });
         $jogo.addEventListener('click', async ev => {
             location = `${BASE_PATH}/#/j/${jid}`;
@@ -311,7 +327,10 @@ async function view_main(reload = false) {
 }
 
 async function view_jogo(jid) {
+    let udata = await bolao.userdata(get_pidx());
+    view_header(udata);
     window.scrollTo(0,0); 
+    let ranking = await bolao.get_ranking1();
     let jogo = bolao.get_jogo(jid);
     let $main = document.querySelector("main");
     $main.innerHTML = `
@@ -377,7 +396,6 @@ async function view_jogo(jid) {
     window.update_tabela = update_tabela;
     window.$t = $tab_palpites;
     function update_tabela() {
-        console.log('atualizando a tab_palpites!!!!');
         for (let i=$tab_palpites.rows.length - 1; i>0; i--) {
             let $row = $tab_palpites.rows[i];
             $row.remove();
@@ -396,9 +414,7 @@ async function view_jogo(jid) {
         $main.appendChild($tab_palpites);
     }
 
-
     function ordena_tabela(ev) {
-        console.log('clicou pra ordenar!!!!');
         tab_palpites.sort(function (l1, l2) {
             if (l1[_coluna] == '') {
                 return 1;
@@ -422,6 +438,8 @@ async function view_jogo(jid) {
 
 async function view_ranking1(n = 4) {
     // default n => ranking-4.json
+    let udata = await bolao.userdata(get_pidx());
+    view_header(udata);
     window.scrollTo(0,0); 
     let $main = document.querySelector("main");
     $main.innerHTML = `
@@ -476,7 +494,6 @@ async function view_ranking1(n = 4) {
     window.update_tabela = update_tabela;
     window.$t = $tab_ranking;
     function update_tabela() {
-        console.log('atualizando a tab_ranking!!!!');
         for (let i=$tab_ranking.rows.length - 1; i>0; i--) {
             let $row = $tab_ranking.rows[i];
             $row.remove();
@@ -497,7 +514,6 @@ async function view_ranking1(n = 4) {
     }
 
     function ordena_tabela(ev) {
-        console.log('clicou pra ordenar!!!!');
         tab_ranking.sort(function (l1, l2) {
             if (l1[_coluna] == '') {
                 return 1;
@@ -523,6 +539,7 @@ async function view_ranking1(n = 4) {
 }
 
 function view_not_found(route) {
+    view_header(null);
     let $main = document.querySelector("main");
     $main.innerHTML = `
         <div id="center-float">
