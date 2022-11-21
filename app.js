@@ -71,6 +71,7 @@ function view_header(udata) {
     // elementos dinâmicos do header
     let $perfil = document.querySelector("#perfil");
     let $muda_perfil = document.querySelector("#muda-perfil");
+    let $goto_ranking = document.querySelector("#goto-ranking");
     let $cron = document.querySelector("#cron");
     let $logout = document.querySelector("#logout");
 
@@ -116,6 +117,10 @@ function view_header(udata) {
             // evita que caracteres digitados sejam tomados como comandos de filtragem
             ev.stopPropagation();
         }
+    });
+
+    $goto_ranking.addEventListener('click', async () => {
+        location = `${BASE_PATH}/#/r`;
     });
 
     $muda_perfil.addEventListener('click', async () => {
