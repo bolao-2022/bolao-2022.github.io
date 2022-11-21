@@ -156,6 +156,10 @@ versao-site {
                     #jid, #extras, #nome1, #nome2 {
                         display: none;
                     }
+                    #tab-ranking {
+                      font-size: 150%;
+                      white-space: nowrap;
+                    }
                 }
                 @media not (max-width: 1200px) {
                     #sigla1, #sigla2 {
