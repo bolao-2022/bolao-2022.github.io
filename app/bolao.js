@@ -8,6 +8,18 @@ window.bolao = bolao;
 let tabela = await (await fetch(`${FILES}/tabela-2.json?v=2`)).json()
 window.tabela = tabela;
 
+let _ranking1 = {};
+window.ranking1 = _ranking1;
+export async function get_ranking1(n = 2) {
+    // default n => ranking-2.json
+    if (!_ranking1[n]) {
+        let filename = `ranking-${n}.json?v=3`;
+        let response = await fetch(`${FILES}/${filename}`);
+        _ranking1[n] = await response.json();
+    }
+    return _ranking1[n];
+}
+
 // lê arquivo de palpites
 let _palpites;
 export async function get_palpites() {

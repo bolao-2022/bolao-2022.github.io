@@ -71,6 +71,7 @@ function view_header(udata) {
     // elementos dinâmicos do header
     let $perfil = document.querySelector("#perfil");
     let $muda_perfil = document.querySelector("#muda-perfil");
+    let $goto_ranking = document.querySelector("#goto-ranking");
     let $cron = document.querySelector("#cron");
     let $logout = document.querySelector("#logout");
 
@@ -116,6 +117,10 @@ function view_header(udata) {
             // evita que caracteres digitados sejam tomados como comandos de filtragem
             ev.stopPropagation();
         }
+    });
+
+    $goto_ranking.addEventListener('click', async () => {
+        location = `${BASE_PATH}/#/r1`;
     });
 
     $muda_perfil.addEventListener('click', async () => {
@@ -175,6 +180,10 @@ function go_to_location_route() {
     } else if (view_selector === 'j') {
         let jid = path[1];
         view_jogo(jid);
+        return;
+    } else if (view_selector === 'r1') {
+        let n = path[1];
+        view_ranking1(n);
         return;
     } else if (view_selector === '') {
         let jogo = path[1];
@@ -336,10 +345,10 @@ async function view_jogo(jid) {
       </div>
       <table id="tab-palpites">
         <tr>
-          <th id="col-id">id</th>
-          <th id="col-nome">nome</th>
-          <th id="col-palpite">palpite</th>
-          <th id="col-pontos">pontos</th>
+          <th id="col-id">ID</th>
+          <th id="col-nome">Nome</th>
+          <th id="col-palpite">Palpite</th>
+          <th id="col-pontos">Pontos</th>
         </tr>
       </table>
     `;
@@ -403,6 +412,105 @@ async function view_jogo(jid) {
     $col_nome.addEventListener('click', ev => {_coluna = 1; ordena_tabela(ev)});
     $col_palpite.addEventListener('click', ev => {_coluna = 2; ordena_tabela(ev)});
 
+}
+
+async function view_ranking1(n = 2) {
+    // default n => ranking-2.json
+    window.scrollTo(0,0); 
+    let $main = document.querySelector("main");
+    $main.innerHTML = `
+      <div id="fixed">
+      <table id="tab-ranking">
+        <colgroup>
+          <col style="width:10%">
+          <col style="width:10%">
+          <col style="width:40%">
+          <col style="width:10%">
+          <col style="width:30%">
+        </colgroup>
+        <tr>
+          <th id="col-id">ID</th>
+          <th id="col-rank">Rank</th>
+          <th id="col-nick">Nome</th>
+          <th id="col-pontos">Pontos</th>
+          <th id="col-calculo">Cálculo</th>
+        </tr>
+      </table>
+    `;
+
+    let ranking = await bolao.get_ranking1(n);
+    let tab_ranking = [];
+    Object.keys(ranking).forEach(id_hash => {
+        let nick = ranking[id_hash].nick || "";
+        let pontos = ranking[id_hash].total_pontos;
+        let rank = ranking[id_hash].rank;
+        const contagem = {};
+        for (const num of Object.values(ranking[id_hash].pontos)) {
+          contagem[num] = contagem[num] ? contagem[num] + 1 : 1;
+        }
+        let calculo = [];
+        for (const pts of ["6", "3", "2"]) {
+            if (contagem[pts]) {
+                calculo.push(`${contagem[pts]}×${pts}`)
+            }
+        }
+        tab_ranking.push([id_hash, rank, nick, pontos, calculo.join(" + ")]);
+    })
+    window.tab_ranking = tab_ranking;
+    let $tab_ranking = $main.querySelector("#tab-ranking");
+    let $col_rank = $tab_ranking.querySelector("#col-rank");
+    let $col_nick = $tab_ranking.querySelector("#col-nick");
+    let $col_pontos = $tab_ranking.querySelector("#col-pontos");
+    update_tabela();
+    let ordem = 1;
+    let _coluna = 1;
+    ordena_tabela();
+
+    // adiciona controllers pra ordenar a tabela
+    window.update_tabela = update_tabela;
+    window.$t = $tab_ranking;
+    function update_tabela() {
+        console.log('atualizando a tab_ranking!!!!');
+        for (let i=$tab_ranking.rows.length - 1; i>0; i--) {
+            let $row = $tab_ranking.rows[i];
+            $row.remove();
+        }
+
+        tab_ranking.forEach(([id_hash, rank, nick, pontos, calculo]) => {
+            let $tr = document.createElement('tr');
+            $tr.innerHTML = `
+                <td>${id_hash.slice(0, 5)}</td>
+                <td>${rank}</td>
+                <td>${nick}</td>
+                <td>${pontos}</td>
+                <td>${calculo}</td>
+            `;
+            $tab_ranking.appendChild($tr);
+        });
+        $main.appendChild($tab_ranking);
+    }
+
+    function ordena_tabela(ev) {
+        console.log('clicou pra ordenar!!!!');
+        tab_ranking.sort(function (l1, l2) {
+            if (l1[_coluna] == '') {
+                return 1;
+            } else if (l2[_coluna] == '') {
+                return -1;
+            }
+            if (typeof l1[_coluna] == 'string') {
+                return ordem * l1[_coluna].localeCompare(l2[_coluna]);
+            } else {
+                return ordem * l1[_coluna] - l2[_coluna];
+            }
+        });
+        ordem = -1 * ordem;
+        update_tabela();
+    }
+
+    $col_nick.addEventListener('click', ev => {_coluna = 2; ordena_tabela(ev)});
+    $col_pontos.addEventListener('click', ev => {_coluna = 3; ordena_tabela(ev)});
+    $col_rank.addEventListener('click', ev => {_coluna = 1; ordena_tabela(ev)});
 }
 
 function view_not_found(route) {
