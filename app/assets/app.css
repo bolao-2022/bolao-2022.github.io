@@ -67,6 +67,11 @@ versao-site {
   color: gray;
 }
 
+.clicavel {
+    text-decoration: underline;
+    color: blue;
+}
+
 #center-float {
     height: 60%;
     display: grid;
