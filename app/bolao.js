@@ -5,7 +5,7 @@ import * as bolao from './bolao.js';
 window.bolao = bolao;
 
 // lê arquivo da tabela
-let tabela = await (await fetch(`${FILES}/tabela-1.json?v=2`)).json()
+let tabela = await (await fetch(`${FILES}/tabela-2.json?v=2`)).json()
 window.tabela = tabela;
 
 // lê arquivo de palpites
@@ -315,7 +315,7 @@ class BolaoJogo extends HTMLElement {
 
     is_editavel() {
         // STUB
-        if (Number(this.jogo.jid) < 3) {
+        if (Number(this.jogo.jid) < 4) {
             return false;
         }
         return !this.get_placar() && !window.site_bloqueado;
