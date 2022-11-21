@@ -24,7 +24,7 @@ export async function get_ranking1(n = 2) {
 let _palpites;
 export async function get_palpites() {
     if (!_palpites) {
-        _palpites = await (await fetch(`${FILES}/palpites-3.json`)).json();
+        _palpites = await (await fetch(`${FILES}/palpites-4.json`)).json();
         window.palpites = _palpites;
         Object.keys(_palpites).forEach(id_perfil => {
             _palpites[id_perfil].pontos = {};
