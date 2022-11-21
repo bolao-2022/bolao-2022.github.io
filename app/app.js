@@ -74,6 +74,7 @@ function view_header(udata) {
     let $goto_ranking = document.querySelector("#goto-ranking");
     let $cron = document.querySelector("#cron");
     let $logout = document.querySelector("#logout");
+    let $home = document.querySelector("#home");
 
     // pro caso de não haver usuário logado/detectado
     if (!udata?.email) {
@@ -89,6 +90,9 @@ function view_header(udata) {
     }
 
     // exibe email do usuário
+    $home.addEventListener('click', async () => {
+        location = `${BASE_PATH}`;
+    });
     $perfil.value = udata.perfil?.nick;
     $perfil.addEventListener('focus', async () => {
         $perfil.setSelectionRange(0, $perfil.value.length)
