@@ -120,7 +120,7 @@ function view_header(udata) {
     });
 
     $goto_ranking.addEventListener('click', async () => {
-        location = `${BASE_PATH}/#/r`;
+        location = `${BASE_PATH}/#/r1`;
     });
 
     $muda_perfil.addEventListener('click', async () => {
