@@ -6,8 +6,8 @@ function get_pidx() {
 }
 
 let _tabela = {};
-export async function get_tabela(n = 5) {
-    // default n => tabela-5.json
+export async function get_tabela(n = 6) {
+    // default n => tabela-6.json
     if (!_tabela[n]) {
         let filename = `tabela-${n}.json?v=0`;
         let response = await fetch(`${FILES}/${filename}`);
