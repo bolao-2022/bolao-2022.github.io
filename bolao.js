@@ -6,8 +6,8 @@ function get_pidx() {
 }
 
 let _tabela = {};
-export async function get_tabela(n = 6) {
-    // default n => tabela-6.json
+export async function get_tabela(n = 7) {
+    // default n => tabela-7.json
     if (!_tabela[n]) {
         let filename = `tabela-${n}.json?v=0`;
         let response = await fetch(`${FILES}/${filename}`);
@@ -18,8 +18,8 @@ export async function get_tabela(n = 6) {
 
 let _ranking1 = {};
 window.ranking1 = _ranking1;
-export async function get_ranking1(n = 6) {
-    // default n => ranking-6.json
+export async function get_ranking1(n = 7) {
+    // default n => ranking-7.json
     if (!_ranking1[n]) {
         let filename = `ranking-${n}.json?v=1`;
         let response = await fetch(`${FILES}/${filename}`);

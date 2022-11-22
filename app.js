@@ -450,8 +450,8 @@ async function view_jogo(jid) {
 
 }
 
-async function view_ranking1(n = 6) {
-    // default n => ranking-6.json
+async function view_ranking1(n = 7) {
+    // default n => ranking-7.json
     let udata = await bolao.userdata(get_pidx());
     view_header(udata);
     window.scrollTo(0,0); 
