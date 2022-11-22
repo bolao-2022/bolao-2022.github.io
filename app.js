@@ -255,6 +255,9 @@ async function view_main(reload = false) {
         $jogo.pidx = pidx;
         if (udata.perfil.id_hash) {
             $jogo.pontos_r1 = ranking[udata.perfil.id_hash].pontos[jid];
+            if (typeof $jogo.pontos_r1 == 'undefined') {
+                $jogo.pontos_r1 = "?";
+            }
         }
         $jogos.push($jogo);
         $jogo.setAttribute("jid", `${jid}`);
@@ -371,7 +374,7 @@ async function view_jogo(jid) {
             <div id="info-msg">
                 <div id="info" style="display: none;">
                         Placar: <span id="placar1"></span>&times;<span id="placar2"></span><br>
-                        Pontos acumulados: <span id="pontos">?</span><br>
+                        Pontos acumulados: <span id="pontos"></span><br>
                 </div>
             </div>
         </div>
@@ -392,6 +395,9 @@ async function view_jogo(jid) {
         let nick = palpites[id_hash].nick || "";
         let palpite = palpites[id_hash].palpites[jid];
         let pontos = ranking[id_hash].pontos[jid];
+        if (typeof pontos == 'undefined') {
+            pontos = "";
+        }
         tab_palpites.push([id_hash, nick, palpite, pontos]);
     })
     window.tab_palpites = tab_palpites;
@@ -415,7 +421,7 @@ async function view_jogo(jid) {
                 <td>${id_hash.slice(0, 5)}</td>
                 <td>${nick}</td>
                 <td>${palpite?.replace(" ", " x ") || "indisponível"}</td>
-                <td>${pontos || "indisponível"}</td>
+                <td>${pontos}</td>
             `;
             $tab_palpites.appendChild($tr);
         });

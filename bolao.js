@@ -194,7 +194,7 @@ class BolaoJogo extends HTMLElement {
             <div id="info-msg">
                 <div id="info" style="display: none;">
                     Placar: <span id="placar1"></span>&times;<span id="placar2"></span><br>
-                    Pontos acumulados: <span id="pontos">${this.pontos_r1 || "?"}</span><br>
+                    Pontos acumulados: <span id="pontos">${this.pontos_r1}</span><br>
                 </div>
             </div>
         `;
