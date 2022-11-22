@@ -415,7 +415,7 @@ async function view_jogo(jid) {
                 <td>${id_hash.slice(0, 5)}</td>
                 <td>${nick}</td>
                 <td>${palpite?.replace(" ", " x ") || "indisponível"}</td>
-                <td>${pontos}</td>
+                <td>${pontos || "indisponível"}</td>
             `;
             $tab_palpites.appendChild($tr);
         });
