@@ -1,11 +1,19 @@
 import { FILES, MARGEM_SEGURANCA_PALPITES, tabela_versao } from './config.js';
 import { now_ts } from './utils.js';
 
-import * as bolao from './bolao.js';
-window.bolao = bolao;
+let _tabela = {};
+export async function get_tabela(n = 4) {
+    // default n => tabela-4.json
+    if (!_tabela[n]) {
+        let filename = `tabela-${n}.json?v=0`;
+        let response = await fetch(`${FILES}/${filename}`);
+        _tabela[n] = await response.json();
+    }
+    return _tabela[n];
+}
 
 // lê arquivo da tabela
-let tabela = await (await fetch(`${FILES}/tabela-4.json?v=0`)).json()
+let tabela = await get_tabela();
 window.tabela = tabela;
 
 let _ranking1 = {};
@@ -70,7 +78,7 @@ function preprocess_userdata(_userdata) {
 
 window.get_palpite_salvo = get_palpite_salvo;
 export async function get_palpite_salvo(email, pidx, jid) {
-    let palpites = await bolao.get_palpites();
+    let palpites = await get_palpites();
     if (jid in palpites) {
         // jogo encerrado pra palpites
         let id_perfil = `${email}:${pidx}`;
@@ -81,7 +89,7 @@ export async function get_palpite_salvo(email, pidx, jid) {
 
 window.get_palpite_rascunho = get_palpite_rascunho;
 export async function get_palpite_rascunho(pidx, jid) {
-    let rascunho = (await bolao.userdata(pidx))?.perfil?.rascunho || {};
+    let rascunho = (await userdata(pidx))?.perfil?.rascunho || {};
     if (Object.keys(rascunho).includes(String(jid))) {
         return rascunho[jid];
     }
@@ -153,7 +161,7 @@ class BolaoJogo extends HTMLElement {
     }
     connectedCallback() {
         this.jid = this.getAttribute("jid");
-        this.jogo = bolao.get_jogo(this.jid);
+        this.jogo = get_jogo(this.jid);
         this.$root.innerHTML = `
             <div id="card">
                 <div id="jid">Jogo ${this.jogo.jid}<br>Grupo ${this.jogo.grupo}</div>
