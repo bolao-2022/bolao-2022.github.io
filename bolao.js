@@ -21,7 +21,7 @@ window.ranking1 = _ranking1;
 export async function get_ranking1(n = 5) {
     // default n => ranking-5.json
     if (!_ranking1[n]) {
-        let filename = `ranking-${n}.json?v=0`;
+        let filename = `ranking-${n}.json?v=1`;
         let response = await fetch(`${FILES}/${filename}`);
         _ranking1[n] = await response.json();
     }
@@ -32,7 +32,7 @@ export async function get_ranking1(n = 5) {
 let _palpites;
 export async function get_palpites() {
     if (!_palpites) {
-        _palpites = await (await fetch(`${FILES}/palpites-5.json?v=2`)).json();
+        _palpites = await (await fetch(`${FILES}/palpites-6.json?v=0`)).json();
         window.palpites = _palpites;
         Object.keys(_palpites).forEach(id_perfil => {
             _palpites[id_perfil].pontos = {};
