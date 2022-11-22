@@ -287,8 +287,8 @@ async function view_main(reload = false) {
             if (criterios.grupo && !$j.jogo.grupo.startsWith(criterios.grupo)) {
                 $j.style.display = "none";
             }
-            let resp = $j.jogo.hora < criterios.prazo;
-            if (criterios.prazo && $j.jogo.hora > criterios.prazo) {
+            let now = new Date().toISOString().slice(0, 16);
+            if (criterios.prazo && $j.jogo.hora > criterios.prazo || $j.jogo.hora < now) {
                 $j.style.display = "none";
             }
         });
