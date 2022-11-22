@@ -18,8 +18,8 @@ export async function get_tabela(n = 6) {
 
 let _ranking1 = {};
 window.ranking1 = _ranking1;
-export async function get_ranking1(n = 5) {
-    // default n => ranking-5.json
+export async function get_ranking1(n = 6) {
+    // default n => ranking-6.json
     if (!_ranking1[n]) {
         let filename = `ranking-${n}.json?v=1`;
         let response = await fetch(`${FILES}/${filename}`);
