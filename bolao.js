@@ -1,6 +1,10 @@
 import { FILES, MARGEM_SEGURANCA_PALPITES, tabela_versao } from './config.js';
 import { now_ts } from './utils.js';
 
+function get_pidx() {
+    return localStorage.getItem('pidx') || '0';
+}
+
 let _tabela = {};
 export async function get_tabela(n = 4) {
     // default n => tabela-4.json
@@ -11,10 +15,6 @@ export async function get_tabela(n = 4) {
     }
     return _tabela[n];
 }
-
-// lê arquivo da tabela
-let tabela = await get_tabela();
-window.tabela = tabela;
 
 let _ranking1 = {};
 window.ranking1 = _ranking1;
@@ -119,7 +119,8 @@ export async function salva_palpite(email, pidx, palpite) {
 
 }
 
-export function get_jogo(jid) {
+export async function get_jogo(jid) {
+    let tabela = await get_tabela();
     let jogo = tabela.jogos[jid];
     if (!jogo)
         return {
@@ -132,6 +133,7 @@ export function get_jogo(jid) {
            "grupo": null
         }
     // adiciona objeto Date
+    let udata = await userdata(get_pidx());
     jogo._hora = new Date(Date.parse(jogo.hora));
     jogo._eh_passado = (jogo._hora.getTime() / 1000) < udata.hora;
     jogo._localeDate = jogo._hora.toLocaleDateString('pt-BR', {day:'numeric', month:'short', year:'numeric', weekday:'long'});
@@ -159,9 +161,9 @@ class BolaoJogo extends HTMLElement {
         //this.$root = this.shadowRoot;
         this.$root = this;
     }
-    connectedCallback() {
+    async connectedCallback() {
         this.jid = this.getAttribute("jid");
-        this.jogo = get_jogo(this.jid);
+        this.jogo = await get_jogo(this.jid);
         this.$root.innerHTML = `
             <div id="card">
                 <div id="jid">Jogo ${this.jogo.jid}<br>Grupo ${this.jogo.grupo}</div>
@@ -192,7 +194,7 @@ class BolaoJogo extends HTMLElement {
             <div id="info-msg">
                 <div id="info" style="display: none;">
                     Placar: <span id="placar1"></span>&times;<span id="placar2"></span><br>
-                    Pontos acumulados: <span id="pontos">?</span><br>
+                    Pontos acumulados: <span id="pontos">${this.pontos_r1 || "?"}</span><br>
                 </div>
             </div>
         `;
@@ -291,7 +293,7 @@ class BolaoJogo extends HTMLElement {
         };
 
         // configura componente
-        if (!this.get_placar()) {
+        if (!(await this.get_placar())) {
             $input1.disabled = false;
             $input2.disabled = false;
         }
@@ -326,7 +328,8 @@ class BolaoJogo extends HTMLElement {
         $input2.addEventListener("keyup", keyup_handler);
     }
 
-    get_placar() {
+    async get_placar() {
+        let tabela = await get_tabela();
         return tabela.jogos[this.jid].placar;
     }
 
@@ -334,15 +337,15 @@ class BolaoJogo extends HTMLElement {
         return `${this.$input1.value} ${this.$input2.value}`
     }
 
-    is_editavel() {
+    async is_editavel() {
         // STUB
         if (this.jogo._eh_passado) {
             return false;
         }
-        return !this.get_placar() && !window.site_bloqueado;
+        return !(await this.get_placar()) && !window.site_bloqueado;
     }
 
-    update() {
+    async update() {
         let $input1 = this.$input1;
         let $input2 = this.$input2;
         let $inputs = this.$inputs;
@@ -351,7 +354,7 @@ class BolaoJogo extends HTMLElement {
         let $info = this.$info;
 
         // atualiza placar
-        let placar = this.get_placar();
+        let placar = await this.get_placar();
         if (placar) {
             $info.style.display = 'block';
             let [placar1, placar2] = placar.split(" ");
@@ -370,7 +373,7 @@ class BolaoJogo extends HTMLElement {
         }
 
         // atualiza editabilidade
-        if (this.is_editavel()) {
+        if (await this.is_editavel()) {
             $input1.removeAttribute("disabled");
             $input2.removeAttribute("disabled");
         } else {

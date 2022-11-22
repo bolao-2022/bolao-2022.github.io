@@ -219,7 +219,12 @@ async function view_site_bloqueado(message) {
 
 async function view_main(reload = false) {
     let pidx = get_pidx();
-    let udata = await bolao.userdata(pidx);
+    let [udata, ranking, palpites] = await Promise.all([
+        bolao.userdata(get_pidx()),
+        bolao.get_ranking1(),
+        bolao.get_palpites()
+    ]);
+
     if ('code' in udata) {
         let msg;
         switch (udata.code) {
@@ -243,12 +248,14 @@ async function view_main(reload = false) {
     let $main = document.querySelector("main");
     $main.innerHTML = '';
     let rascunho = udata?.perfil?.rascunho || {};
-    let palpites = await bolao.get_palpites();
     let id_perfil = `${udata.email}:${udata.pidx}`;
     let $jogos = [];
     for (let jid=1; jid<=48; jid++) {
         let $jogo = document.createElement("bolao-jogo");
         $jogo.pidx = pidx;
+        if (udata.perfil.id_hash) {
+            $jogo.pontos_r1 = ranking[udata.perfil.id_hash].pontos[jid];
+        }
         $jogos.push($jogo);
         $jogo.setAttribute("jid", `${jid}`);
         let palpite = (await bolao.get_palpite_salvo(udata.email, pidx, String(jid)))
@@ -326,63 +333,65 @@ async function view_main(reload = false) {
 }
 
 async function view_jogo(jid) {
-    let udata = await bolao.userdata(get_pidx());
+    let [udata, jogo, ranking, palpites] = await Promise.all([
+        bolao.userdata(get_pidx()),
+        bolao.get_jogo(jid),
+        bolao.get_ranking1(),
+        bolao.get_palpites()
+    ]);
+
     view_header(udata);
     window.scrollTo(0,0); 
-    let ranking = await bolao.get_ranking1();
-    let jogo = bolao.get_jogo(jid);
     let $main = document.querySelector("main");
     $main.innerHTML = `
-      <div id="fixed">
-
+        <div id="fixed">
             <div id="card">
-                <div id="jid">Jogo ${jid}<br>Grupo ${jogo.grupo}</div>
-                <div id="pais1">
-                    <span id="sigla1">${jogo.time1}</span>
-                    <span id="nome1">${jogo.nome1}</span>
-                    <img id="band1" src="${jogo.band1}?tx=w_30">
-                </div>
-                <div id="inputs">
-                    s1
-                    &times;
-                    s2
-                </div>
-                <div id="pais2">
-                    <img id="band2" src="${jogo.band2}?tx=w_30">
-                    <span id="nome2">${jogo.nome2}</span>
-                    <span id="sigla2">${jogo.time2}</span>
-                </div>
-                <div id="extras" style="text-align: right;">
-                    <span id="hora">${jogo._localeDate}</span><br>
-                    <span id="hora">${jogo._localeTime}</span><br>
-                    <span id="local">${jogo.local}</span>
-                </div>
+              <div id="jid">Jogo ${jid}<br>Grupo ${jogo.grupo}</div>
+              <div id="pais1">
+                  <span id="sigla1">${jogo.time1}</span>
+                  <span id="nome1">${jogo.nome1}</span>
+                  <img id="band1" src="${jogo.band1}?tx=w_30">
+              </div>
+              <div id="inputs">
+                  s1
+                  &times;
+                  s2
+              </div>
+              <div id="pais2">
+                  <img id="band2" src="${jogo.band2}?tx=w_30">
+                  <span id="nome2">${jogo.nome2}</span>
+                  <span id="sigla2">${jogo.time2}</span>
+              </div>
+              <div id="extras" style="text-align: right;">
+                  <span id="hora">${jogo._localeDate}</span><br>
+                  <span id="hora">${jogo._localeTime}</span><br>
+                  <span id="local">${jogo.local}</span>
+              </div>
             </div>
             <div id="info-msg">
                 <div id="info" style="display: none;">
-                    Placar: <span id="placar1"></span>&times;<span id="placar2"></span><br>
-                    Pontos acumulados: <span id="pontos">?</span><br>
+                        Placar: <span id="placar1"></span>&times;<span id="placar2"></span><br>
+                        Pontos acumulados: <span id="pontos">?</span><br>
                 </div>
             </div>
-      </div>
-      <table id="tab-palpites">
-        <tr>
-          <th id="col-id">ID</th>
-          <th id="col-nome">Nome</th>
-          <th id="col-palpite">Palpite</th>
-          <th id="col-pontos">Pontos</th>
-        </tr>
-      </table>
+        </div>
+        <table id="tab-palpites">
+            <tr>
+                <th id="col-id">ID</th>
+                <th id="col-nome">Nome</th>
+                <th id="col-palpite">Palpite</th>
+                <th id="col-pontos">Pontos</th>
+            </tr>
+        </table>
     `;
 
-    let palpites = await bolao.get_palpites();
     window.palpites = palpites;
 
     let tab_palpites = [];
     Object.keys(palpites).forEach(id_hash => {
         let nick = palpites[id_hash].nick || "";
         let palpite = palpites[id_hash].palpites[jid];
-        let pontos = palpites[id_hash].pontos[jid];
+        let pontos = ranking[id_hash].pontos[jid];
         tab_palpites.push([id_hash, nick, palpite, pontos]);
     })
     window.tab_palpites = tab_palpites;
