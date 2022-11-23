@@ -5,47 +5,6 @@ function get_pidx() {
     return localStorage.getItem('pidx') || '0';
 }
 
-let _tabela = {};
-export async function get_tabela(n = 8) {
-    // default n => tabela-8.json
-    if (!_tabela[n]) {
-        let filename = `tabela-${n}.json?v=0`;
-        let response = await fetch(`${FILES}/${filename}`);
-        _tabela[n] = await response.json();
-    }
-    return _tabela[n];
-}
-
-let _ranking1 = {};
-window.ranking1 = _ranking1;
-export async function get_ranking1(n = 8) {
-    // default n => ranking-8.json
-    if (!_ranking1[n]) {
-        let filename = `ranking-${n}.json?v=1`;
-        let response = await fetch(`${FILES}/${filename}`);
-        _ranking1[n] = await response.json();
-    }
-    return _ranking1[n];
-}
-
-// lê arquivo de palpites
-let _palpites;
-export async function get_palpites() {
-    if (!_palpites) {
-        _palpites = await (await fetch(`${FILES}/palpites-8.json?v=0`)).json();
-        window.palpites = _palpites;
-        Object.keys(_palpites).forEach(id_perfil => {
-            _palpites[id_perfil].pontos = {};
-            Object.keys(_palpites[id_perfil].palpites).forEach(jid => {
-                _palpites[id_perfil].pontos[jid] = -1; // buscar do ranking ou da tabela com o placar
-            });
-        });
-        delete _palpites['4fcc1b514ce7345b5e02d388403838f0a371bf2d'];
-    }
-
-    return _palpites;
-}
-
 let _userdata;
 export async function userdata(pidx, reload = false) {
     if (!_userdata || reload) {
@@ -61,19 +20,61 @@ export async function userdata(pidx, reload = false) {
             checa_token();
         });
         let headers = {"Authorization": `Bearer ${window.idToken}`};
-        let data = await (await fetch(`${API}?pidx=${pidx}`, {headers:headers})).json();
-        _userdata = preprocess_userdata(data);
+        _userdata = await (await fetch(`${API}?pidx=${pidx}`, {headers:headers})).json();
+        preprocess_userdata(_userdata);
         window.udata = _userdata;
     }
     return _userdata;
+
+    function preprocess_userdata(_userdata) {
+        window.deadline_ts = now_ts() + _userdata.tempo - MARGEM_SEGURANCA_PALPITES;
+        _userdata.fn_palpites = _userdata.arqs[0];
+        _userdata.fn_tabela = _userdata.arqs[1];
+        _userdata.fn_ranking1 = _userdata.arqs[2];
+        delete _userdata.arqs;
+        return _userdata;
+    }
 }
 
-function preprocess_userdata(_userdata) {
-    // STUB
+let _palpites;
+export async function get_palpites() {
+    if (!_palpites) {
+        let udata = await userdata(get_pidx());
+        _palpites = await (await fetch(`${FILES}/${udata.fn_palpites}?v=0`)).json();
+        window.palpites = _palpites;
+        Object.keys(_palpites).forEach(id_perfil => {
+            _palpites[id_perfil].pontos = {};
+            Object.keys(_palpites[id_perfil].palpites).forEach(jid => {
+                _palpites[id_perfil].pontos[jid] = -1; // buscar do ranking ou da tabela com o placar
+            });
+        });
+        delete _palpites['4fcc1b514ce7345b5e02d388403838f0a371bf2d'];
+    }
 
-    // atualiza countdown global
-    window.deadline_ts = now_ts() + _userdata.tempo - MARGEM_SEGURANCA_PALPITES;
-    return _userdata;
+    return _palpites;
+}
+
+let _tabela;
+export async function get_tabela() {
+    if (_tabela) {
+        return _tabela;
+    }
+
+    let udata = await userdata(get_pidx());
+    _tabela = await (await fetch(`${FILES}/${udata.fn_tabela}`)).json();
+    return _tabela;
+}
+
+let _ranking1 = {};
+export async function get_ranking1(n) {
+    if (_ranking1[n]) {
+        return _ranking1[n];
+    }
+
+    let udata = await userdata(get_pidx());
+    let filename = typeof n == 'undefined' ?  udata.fn_ranking1 : `ranking-${n}.json?v=0`;
+    _ranking1[n] = await (await fetch(`${FILES}/${filename}`)).json();
+    return _ranking1[n];
 }
 
 window.get_palpite_salvo = get_palpite_salvo;
@@ -135,7 +136,7 @@ export async function get_jogo(jid) {
     // adiciona objeto Date
     let udata = await userdata(get_pidx());
     jogo._hora = new Date(Date.parse(jogo.hora));
-    jogo._eh_passado = (jogo._hora.getTime() / 1000) < udata.hora;
+    jogo._ja_ocorreu = (jogo._hora.getTime() / 1000) < udata.hora;
     jogo._localeDate = jogo._hora.toLocaleDateString('pt-BR', {day:'numeric', month:'short', year:'numeric', weekday:'long'});
     jogo._localeDate = jogo._localeDate.charAt(0).toUpperCase() + jogo._localeDate.slice(1);
     jogo._localeTime = jogo._hora.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
@@ -326,6 +327,7 @@ class BolaoJogo extends HTMLElement {
         // evita que teclas nos inputs sejam interpretadas como filtragem
         $input1.addEventListener("keyup", keyup_handler);
         $input2.addEventListener("keyup", keyup_handler);
+        this.update();
     }
 
     async get_placar() {
@@ -337,15 +339,16 @@ class BolaoJogo extends HTMLElement {
         return `${this.$input1.value} ${this.$input2.value}`
     }
 
-    async is_editavel() {
-        // STUB
-        if (this.jogo._eh_passado) {
+    async eh_editavel() {
+        await get_tabela();
+        if (this.jogo._ja_ocorreu) {
             return false;
         }
         return !(await this.get_placar()) && !window.site_bloqueado;
     }
 
     async update() {
+        await get_jogo(this.jid);
         let $input1 = this.$input1;
         let $input2 = this.$input2;
         let $inputs = this.$inputs;
@@ -373,7 +376,7 @@ class BolaoJogo extends HTMLElement {
         }
 
         // atualiza editabilidade
-        if (await this.is_editavel()) {
+        if (await this.eh_editavel()) {
             $input1.removeAttribute("disabled");
             $input2.removeAttribute("disabled");
         } else {

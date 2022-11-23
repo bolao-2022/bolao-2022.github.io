@@ -250,6 +250,7 @@ async function view_main(reload = false) {
     let rascunho = udata?.perfil?.rascunho || {};
     let id_perfil = `${udata.email}:${udata.pidx}`;
     let $jogos = [];
+    window.$jogos = $jogos;
     for (let jid=1; jid<=48; jid++) {
         let $jogo = document.createElement("bolao-jogo");
         $jogo.pidx = pidx;
@@ -348,35 +349,6 @@ async function view_jogo(jid) {
     let $main = document.querySelector("main");
     $main.innerHTML = `
         <div id="fixed">
-            <div id="card">
-              <div id="jid">Jogo ${jid}<br>Grupo ${jogo.grupo}</div>
-              <div id="pais1">
-                  <span id="sigla1">${jogo.time1}</span>
-                  <span id="nome1">${jogo.nome1}</span>
-                  <img id="band1" src="${jogo.band1}?tx=w_30">
-              </div>
-              <div id="inputs">
-                  s1
-                  &times;
-                  s2
-              </div>
-              <div id="pais2">
-                  <img id="band2" src="${jogo.band2}?tx=w_30">
-                  <span id="nome2">${jogo.nome2}</span>
-                  <span id="sigla2">${jogo.time2}</span>
-              </div>
-              <div id="extras" style="text-align: right;">
-                  <span id="hora">${jogo._localeDate}</span><br>
-                  <span id="hora">${jogo._localeTime}</span><br>
-                  <span id="local">${jogo.local}</span>
-              </div>
-            </div>
-            <div id="info-msg">
-                <div id="info" style="display: none;">
-                        Placar: <span id="placar1"></span>&times;<span id="placar2"></span><br>
-                        Pontos acumulados: <span id="pontos"></span><br>
-                </div>
-            </div>
         </div>
         <table id="tab-palpites">
             <tr>
@@ -388,7 +360,22 @@ async function view_jogo(jid) {
         </table>
     `;
 
-    window.palpites = palpites;
+    let $fixed = $main.querySelector("#fixed");
+    let $jogo = document.createElement("bolao-jogo");
+    let palpite = (await bolao.get_palpite_salvo(udata.email, get_pidx(), String(jid)))
+                  || (await bolao.get_palpite_rascunho(get_pidx(), String(jid)))
+                  || "0 0";
+    [$jogo.palpite1, $jogo.palpite2] = palpite.split(" ");
+    $jogo.setAttribute("jid", `${jid}`);
+    $fixed.appendChild($jogo);
+    $jogo.addEventListener('click', () => {location = '#';});
+    $jogo.update();
+    if (udata.perfil.id_hash) {
+        $jogo.pontos_r1 = ranking[udata.perfil.id_hash].pontos[jid];
+        if (typeof $jogo.pontos_r1 == 'undefined') {
+            $jogo.pontos_r1 = "?";
+        }
+    }
 
     let tab_palpites = [];
     Object.keys(palpites).forEach(id_hash => {
@@ -400,15 +387,13 @@ async function view_jogo(jid) {
         }
         tab_palpites.push([id_hash, nick, palpite, pontos]);
     })
-    window.tab_palpites = tab_palpites;
+    
     let $tab_palpites = $main.querySelector("#tab-palpites");
     let $col_nome = $tab_palpites.querySelector("#col-nome");
     let $col_palpite = $tab_palpites.querySelector("#col-palpite");
     update_tabela();
 
     // adiciona controllers pra ordenar a tabela
-    window.update_tabela = update_tabela;
-    window.$t = $tab_palpites;
     function update_tabela() {
         for (let i=$tab_palpites.rows.length - 1; i>0; i--) {
             let $row = $tab_palpites.rows[i];
@@ -450,8 +435,7 @@ async function view_jogo(jid) {
 
 }
 
-async function view_ranking1(n = 8) {
-    // default n => ranking-8.json
+async function view_ranking1(n) {
     let udata = await bolao.userdata(get_pidx());
     view_header(udata);
     window.scrollTo(0,0); 
