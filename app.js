@@ -392,9 +392,9 @@ async function view_perfil(id_hash) {
     function ordena_tabela(ev) {
         tab_perfil.sort(function (l1, l2) {
             if (l1[_coluna] == '') {
-                return 1;
-            } else if (l2[_coluna] == '') {
                 return -1;
+            } else if (l2[_coluna] == '') {
+                return 1;
             }
             return ordem * (Number(l1[_coluna]) - Number(l2[_coluna]));
         });
