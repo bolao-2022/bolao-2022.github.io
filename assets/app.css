@@ -180,7 +180,7 @@ versao-site {
   padding: 8px;
 }
 
-#tab-perfil td.center, #tab-perfil th.center {
+td.center, th.center {
   text-align: center;
 }
 
