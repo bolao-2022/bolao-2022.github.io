@@ -495,7 +495,7 @@ async function view_jogo(jid) {
             let $tr = document.createElement('tr');
             $tr.innerHTML = `
                 <td>${id_hash.slice(0, 5)}</td>
-                <td>${nick}</td>
+                <td><a href="#/p/${id_hash}">${nick || "(sem nome)"}</a></td>
                 <td>${palpite?.replace(" ", " x ") || "indisponível"}</td>
                 <td>${pontos}</td>
             `;
