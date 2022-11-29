@@ -543,7 +543,7 @@ async function view_ranking1(n) {
         </colgroup>
         <tr>
           <th id="col-id">ID</th>
-          <th id="col-rank">Rank</th>
+          <th id="col-rank" class="center">Rank</th>
           <th id="col-nick">Nome</th>
           <th id="col-pontos">Pontos</th>
           <th id="col-calculo">Cálculo</th>
