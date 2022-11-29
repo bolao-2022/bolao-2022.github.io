@@ -18,6 +18,10 @@ th {
   text-align: left;
 }
 
+td.center, th.center {
+  text-align: center;
+}
+
 tr:nth-child(odd){
   background-color: #dff;
 }
@@ -178,10 +182,6 @@ versao-site {
 
 #tab-perfil td {
   padding: 8px;
-}
-
-#tab-perfil td.center, #tab-perfil th.center {
-  text-align: center;
 }
 
 .perfil #card {
