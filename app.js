@@ -563,7 +563,9 @@ async function view_ranking1(n) {
         let pontos = ranking[id_hash].total_pontos;
         let rank = ranking[id_hash].rank;
         let delta = evolucao[id_hash].rank[n - 2] - evolucao[id_hash].rank[n - 1];
-        let sinal = delta > 0 ? "🡱" : (delta < 0 ? "🡳" : "");
+        // let sinal = delta > 0 ? "🡱" : (delta < 0 ? "🡳" : "");
+        let sinal = delta > 0 ? "▲" : (delta < 0 ? "▼" : "");
+        //let sinal = delta > 0 ? `<i class="fa-sharp fa-solid fa-up"></i>`: (delta < 0 ? `<i class="fa-sharp fa-solid fa-down"></i>` : "");
         const contagem = {};
         for (const num of Object.values(ranking[id_hash].pontos)) {
           contagem[num] = contagem[num] ? contagem[num] + 1 : 1;
