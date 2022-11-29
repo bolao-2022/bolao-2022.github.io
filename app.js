@@ -356,6 +356,7 @@ async function view_perfil(id_hash) {
         </table>
     `;
     let tab_perfil = [];
+    window.tab_perfil = tab_perfil;
     Object.keys(palpites[id_hash].palpites).forEach(jid => {
         let palpite = palpites[id_hash].palpites[jid];
         let pontos = ranking[id_hash].pontos[jid];
