@@ -356,7 +356,6 @@ async function view_perfil(id_hash) {
         </table>
     `;
     let tab_perfil = [];
-    window.tab_perfil = tab_perfil;
     Object.keys(palpites[id_hash].palpites).forEach(jid => {
         let palpite = palpites[id_hash].palpites[jid];
         let pontos = ranking[id_hash].pontos[jid];
@@ -377,7 +376,7 @@ async function view_perfil(id_hash) {
         [$jogo.palpite1, $jogo.palpite2] = palpite.split(" ");
         let placar = await $jogo.get_placar();
         let $placar = $tr.querySelector("#placar");
-        $placar.innerText = placar.replace(" ", " × ");
+        $placar.innerText = placar?.replace(" ", " × ") || "";
     });
     $main.appendChild($tab_perfil);
 
@@ -393,9 +392,9 @@ async function view_perfil(id_hash) {
     function ordena_tabela(ev) {
         tab_perfil.sort(function (l1, l2) {
             if (l1[_coluna] == '') {
-                return -1;
-            } else if (l2[_coluna] == '') {
                 return 1;
+            } else if (l2[_coluna] == '') {
+                return -1;
             }
             return ordem * (Number(l1[_coluna]) - Number(l2[_coluna]));
         });
@@ -422,7 +421,7 @@ async function view_perfil(id_hash) {
             [$jogo.palpite1, $jogo.palpite2] = palpite.split(" ");
             let placar = await $jogo.get_placar();
             let $placar = $tr.querySelector("#placar");
-            $placar.innerText = placar.replace(" ", " × ");
+            $placar.innerText = placar?.replace(" ", " × ") || "";
             $tab_perfil.appendChild($tr);
         });
         $main.appendChild($tab_perfil);
@@ -570,7 +569,6 @@ async function view_ranking1(n) {
         }
         tab_ranking.push([id_hash, rank, nick, pontos, calculo.join(" + ")]);
     })
-    window.tab_ranking = tab_ranking;
     let $tab_ranking = $main.querySelector("#tab-ranking");
     let $col_rank = $tab_ranking.querySelector("#col-rank");
     let $col_nick = $tab_ranking.querySelector("#col-nick");
