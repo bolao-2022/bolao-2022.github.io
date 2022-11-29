@@ -532,7 +532,6 @@ async function view_ranking1(n) {
     window.scrollTo(0,0); 
     let $main = document.querySelector("main");
     $main.innerHTML = `
-      <h2 id="nick">Ranking após ${n} jogos</h2>
       <div id="fixed">
       <table id="tab-ranking">
         <colgroup>
