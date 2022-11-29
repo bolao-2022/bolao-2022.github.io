@@ -127,7 +127,7 @@ versao-site {
                     outline: none;
                 }
                 input:disabled {
-                    background-color: #bee;
+                    background-color: #dff;
                     color: #4a5f5f;
                     font-weight: bold;
                 }
@@ -154,6 +154,9 @@ versao-site {
                         grid-template-columns: 1fr max-content 1fr;
                         font-size: 120%;
                     }
+                    #pais1, #pais2 {
+                        white-space: nowrap;
+                    }
                     #band1, #band2 {
                         width: 90px;
                     }
@@ -172,6 +175,53 @@ versao-site {
                     }
                 }
             /* </style> */
+
+#tab-perfil td {
+  padding: 8px;
+}
+
+#tab-perfil td.center, #tab-perfil th.center {
+  text-align: center;
+}
+
+.perfil #card {
+  border: 0;
+  background: transparent;
+  grid-template-columns: 1fr max-content max-content 12em;
+  grid-template-rows: auto 0px;
+  margin: 0 0 0 0;
+}
+
+@media (max-width: 1200px) {
+    #inputs input { font-size: 1.5rem;}
+    table {
+        width: auto;
+    }
+    th, td {
+        font-size: 1.5rem;
+    }
+    .perfil #card {
+        grid-template-columns: 1fr max-content 1fr;
+    }
+}
+
+#nick {
+  margin: 1em 0;
+}
+
+.perfil #card #extras {
+  display: none;
+}
+.perfil #info-msg {
+  display: none;
+}
+.perfil input:disabled {
+    padding: 2px;
+    background-color: transparent;
+    border-radius: 5px;
+    border: 1px solid gray;
+    font-weight: 400;
+}
 
 #perfil {
   display: block;

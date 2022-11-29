@@ -66,8 +66,8 @@ function go_to_location_route() {
     let path = route.split("/").slice(1);
     let view_selector = path[0];
     if (view_selector === 'p') {
-        let perfil = path[1];
-        views.view_perfil(perfil);
+        let id_hash = path[1];
+        view_perfil(id_hash);
         return;
     } else if (view_selector === 'j') {
         let jid = path[1];
@@ -336,6 +336,98 @@ async function view_main(reload = false) {
 
 }
 
+async function view_perfil(id_hash) {
+    let [ranking, palpites] = await Promise.all([
+        bolao.get_ranking1(),
+        bolao.get_palpites()
+    ]);
+    view_header(udata);
+    window.scrollTo(0,0); 
+    let $main = document.querySelector("main");
+    let nick = ranking[id_hash].nick;
+    $main.innerHTML = `
+        <h2 id="nick">${nick}</h2>
+        <table id="tab-perfil">
+            <tr>
+                <th id="col-jogo">Jogo e palpite</th>
+                <th class="center" id="col-palpite">Placar</th>
+                <th class="center" id="col-pontos">Pontos</th>
+            </tr>
+        </table>
+    `;
+    let tab_perfil = [];
+    Object.keys(palpites[id_hash].palpites).forEach(jid => {
+        let palpite = palpites[id_hash].palpites[jid];
+        let pontos = ranking[id_hash].pontos[jid];
+        tab_perfil.push([jid, palpite, pontos]);
+    })
+
+    let $tab_perfil = $main.querySelector("#tab-perfil");
+    tab_perfil.forEach(async ([jid, palpite, pontos]) => {
+        let $tr = document.createElement('tr');
+        $tr.innerHTML = `
+            <td><bolao-jogo class="perfil" jid="${jid}"></bolao-jogo></td>
+            <td id="placar" class="center"></td>
+            <td class="center">${pontos || ""}</td>
+        `;
+        $tab_perfil.appendChild($tr);
+        let $jogo = $tr.querySelector("bolao-jogo");
+        $jogo.mini = true;
+        [$jogo.palpite1, $jogo.palpite2] = palpite.split(" ");
+        let placar = await $jogo.get_placar();
+        let $placar = $tr.querySelector("#placar");
+        $placar.innerText = placar.replace(" ", " × ");
+    });
+    $main.appendChild($tab_perfil);
+
+    let $col_jogo = $tab_perfil.querySelector("#col-jogo");
+    let $col_pontos = $tab_perfil.querySelector("#col-pontos");
+    let ordem = -1;
+    let _coluna = 2;
+    $col_jogo.addEventListener('click', ev => {_coluna = 0; ordena_tabela(ev)});
+    $col_jogo.classList.add('clicavel');
+    $col_pontos.addEventListener('click', ev => {_coluna = 2; ordena_tabela(ev)});
+    $col_pontos.classList.add('clicavel');
+
+    function ordena_tabela(ev) {
+        tab_perfil.sort(function (l1, l2) {
+            if (l1[_coluna] == '') {
+                return 1;
+            } else if (l2[_coluna] == '') {
+                return -1;
+            }
+            return ordem * (Number(l1[_coluna]) - Number(l2[_coluna]));
+        });
+        ordem = -1 * ordem;
+        update_tabela();
+    }
+
+    function update_tabela() {
+        for (let i=$tab_perfil.rows.length - 1; i>0; i--) {
+            let $row = $tab_perfil.rows[i];
+            $row.remove();
+        }
+
+        tab_perfil.forEach(async ([jid, palpite, pontos]) => {
+            let $tr = document.createElement('tr');
+            $tr.innerHTML = `
+                <td><bolao-jogo class="perfil" jid="${jid}"></bolao-jogo></td>
+                <td id="placar" class="center"></td>
+                <td class="center">${pontos || ""}</td>
+            `;
+            $tab_perfil.appendChild($tr);
+            let $jogo = $tr.querySelector("bolao-jogo");
+            $jogo.mini = true;
+            [$jogo.palpite1, $jogo.palpite2] = palpite.split(" ");
+            let placar = await $jogo.get_placar();
+            let $placar = $tr.querySelector("#placar");
+            $placar.innerText = placar.replace(" ", " × ");
+            $tab_perfil.appendChild($tr);
+        });
+        $main.appendChild($tab_perfil);
+    }
+}
+
 async function view_jogo(jid) {
     let [udata, jogo, ranking, palpites] = await Promise.all([
         bolao.userdata(get_pidx()),
@@ -348,8 +440,7 @@ async function view_jogo(jid) {
     window.scrollTo(0,0); 
     let $main = document.querySelector("main");
     $main.innerHTML = `
-        <div id="fixed">
-        </div>
+        <div id="fixed"></div>
         <table id="tab-palpites">
             <tr>
                 <th id="col-id">ID</th>
@@ -502,7 +593,7 @@ async function view_ranking1(n) {
             $tr.innerHTML = `
                 <td>${id_hash.slice(0, 5)}</td>
                 <td>${rank}</td>
-                <td>${nick}</td>
+                <td><a href="#/p/${id_hash}">${nick || "(sem nome)"}</a></td>
                 <td>${pontos}</td>
                 <td>${calculo}</td>
             `;

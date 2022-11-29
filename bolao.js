@@ -167,7 +167,7 @@ class BolaoJogo extends HTMLElement {
         this.jogo = await get_jogo(this.jid);
         this.$root.innerHTML = `
             <div id="card">
-                <div id="jid">Jogo ${this.jogo.jid}<br>Grupo ${this.jogo.grupo}</div>
+                <div id="jid"></div>
                 <div id="pais1">
                     <span id="sigla1">${this.jogo.time1}</span>
                     <span id="nome1">${this.jogo.nome1}</span>
@@ -207,6 +207,16 @@ class BolaoJogo extends HTMLElement {
         this.$info = this.$root.querySelector("#info");
         this.$placar1 = this.$root.querySelector("#placar1");
         this.$placar2 = this.$root.querySelector("#placar2");
+        let $jid = this.$root.querySelector("#jid");
+        if (this.mini) {
+            $jid.innerHTML = `
+                Jogo ${this.jogo.jid} (Grupo ${this.jogo.grupo})
+            `;
+        } else {
+            $jid.innerHTML = `
+                Jogo ${this.jogo.jid}<br>Grupo ${this.jogo.grupo}
+            `;
+        }
 
         // variáveis para configurar o componente
         let $card = this.$root.querySelector("#card");
@@ -340,6 +350,9 @@ class BolaoJogo extends HTMLElement {
     }
 
     async eh_editavel() {
+        if (!this.pidx) {
+            return false;
+        }
         await get_tabela();
         if (this.jogo._ja_ocorreu) {
             return false;
