@@ -545,7 +545,7 @@ async function view_ranking1(n) {
           <th id="col-id">ID</th>
           <th id="col-rank" class="center">Rank</th>
           <th id="col-nick">Nome</th>
-          <th id="col-pontos">Pontos</th>
+          <th id="col-pontos" class="center">Pontos</th>
           <th id="col-calculo">Cálculo</th>
         </tr>
       </table>
@@ -591,9 +591,9 @@ async function view_ranking1(n) {
             let $tr = document.createElement('tr');
             $tr.innerHTML = `
                 <td>${id_hash.slice(0, 5)}</td>
-                <td>${rank}</td>
+                <td class="center">${rank}</td>
                 <td><a href="#/p/${id_hash}">${nick || "(sem nome)"}</a></td>
-                <td>${pontos}</td>
+                <td class="center">${pontos}</td>
                 <td>${calculo}</td>
             `;
             $tab_ranking.appendChild($tr);
