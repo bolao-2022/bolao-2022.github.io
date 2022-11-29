@@ -527,11 +527,16 @@ async function view_jogo(jid) {
 }
 
 async function view_ranking1(n) {
-    let udata = await bolao.userdata(get_pidx());
+    let [udata, evolucao] = await Promise.all([
+        bolao.userdata(get_pidx()),
+        bolao.get_evolucao()
+    ]);
+    n = n || Number(udata.fn_ranking1.replace(/\D/g, ''));
     view_header(udata);
     window.scrollTo(0,0); 
     let $main = document.querySelector("main");
     $main.innerHTML = `
+      <h2 id="nick">Ranking após ${n} jogos</h2>
       <div id="fixed">
       <table id="tab-ranking">
         <colgroup>
@@ -557,6 +562,8 @@ async function view_ranking1(n) {
         let nick = ranking[id_hash].nick || "";
         let pontos = ranking[id_hash].total_pontos;
         let rank = ranking[id_hash].rank;
+        let delta = evolucao[id_hash].rank[n - 2] - evolucao[id_hash].rank[n - 1];
+        let sinal = delta > 0 ? "🡱" : (delta < 0 ? "🡳" : "");
         const contagem = {};
         for (const num of Object.values(ranking[id_hash].pontos)) {
           contagem[num] = contagem[num] ? contagem[num] + 1 : 1;
@@ -567,7 +574,19 @@ async function view_ranking1(n) {
                 calculo.push(`${contagem[pts]}×${pts}`)
             }
         }
-        tab_ranking.push([id_hash, rank, nick, pontos, calculo.join(" + ")]);
+        let num_setas = Math.min(Math.abs(delta), 50);
+        let setas;
+        if (delta > 0) {
+            setas = ` <span style="color: green;">${sinal.repeat(num_setas)}</span>`;
+            delta = ` <span style="color: #888; font-size: 0.8rem;"> ${sinal}${Math.abs(delta)}</span>`;
+        } else if (delta < 0) {
+            setas = ` <span style="color: red;">${sinal.repeat(num_setas)}</span>`;
+            delta = ` <span style="color: #888; font-size: 0.8rem;"> ${sinal}${Math.abs(delta)}</span>`;
+        } else {
+            setas = ``;
+            delta = ``;
+        }
+        tab_ranking.push([id_hash, rank, nick, pontos, calculo.join(" + "), delta, setas]);
     })
     let $tab_ranking = $main.querySelector("#tab-ranking");
     let $col_rank = $tab_ranking.querySelector("#col-rank");
@@ -587,12 +606,12 @@ async function view_ranking1(n) {
             $row.remove();
         }
 
-        tab_ranking.forEach(([id_hash, rank, nick, pontos, calculo]) => {
+        tab_ranking.forEach(([id_hash, rank, nick, pontos, calculo, delta, setas]) => {
             let $tr = document.createElement('tr');
             $tr.innerHTML = `
                 <td>${id_hash.slice(0, 5)}</td>
-                <td class="center">${rank}</td>
-                <td><a href="#/p/${id_hash}">${nick || "(sem nome)"}</a></td>
+                <td class="center">${rank}${delta}</td>
+                <td><a href="#/p/${id_hash}">${nick || "(sem nome)"}${setas}</a></td>
                 <td class="center">${pontos}</td>
                 <td>${calculo}</td>
             `;

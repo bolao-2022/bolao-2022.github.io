@@ -72,7 +72,7 @@ versao-site {
 }
 
 .clicavel {
-    text-decoration: underline;
+    text-decoration: none;
     color: blue;
 }
 
@@ -153,6 +153,9 @@ versao-site {
                     border-radius: 12px;
                     border: 1px solid black;
                 }
+
+                #tab-ranking a { text-decoration: none; }
+
                 @media (max-width: 1200px) {
                     #card {
                         grid-template-columns: 1fr max-content 1fr;
