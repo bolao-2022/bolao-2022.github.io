@@ -540,11 +540,11 @@ async function view_ranking1(n) {
       <div id="fixed">
       <table id="tab-ranking">
         <colgroup>
-          <col style="width:10%">
-          <col style="width:10%">
-          <col style="width:40%">
-          <col style="width:10%">
-          <col style="width:30%">
+          <col style="width:5%;">
+          <col style="width:5%;">
+          <col style="width:55%;">
+          <col style="width:5%;">
+          <col style="width:30%;">
         </colgroup>
         <tr>
           <th id="col-id">ID</th>
@@ -573,17 +573,19 @@ async function view_ranking1(n) {
         let calculo = [];
         for (const pts of ["6", "3", "2"]) {
             if (contagem[pts]) {
-                calculo.push(`${contagem[pts]}×${pts}`)
+                calculo.push(`${contagem[pts]}<span class="tipo-ponto">×${pts}</span>`)
             }
         }
-        let num_setas = Math.min(Math.abs(delta), 50);
+        let num_setas = Math.abs(delta);
+        //let num_setas = Math.min(Math.ceil(Math.abs(delta) / 4.4), 10);
+        //let num_setas = Math.min(Math.abs(delta), 5);
         let setas;
         if (delta > 0) {
-            setas = ` <span style="color: green;">${sinal.repeat(num_setas)}</span>`;
-            delta = ` <span style="color: #888; font-size: 0.8rem;"> ${sinal}${Math.abs(delta)}</span>`;
+            setas = `<span class="setas verde">${sinal.repeat(num_setas)}</span>`;
+            delta = ` <span class="delta"> +${Math.abs(delta)}</span>`;
         } else if (delta < 0) {
-            setas = ` <span style="color: red;">${sinal.repeat(num_setas)}</span>`;
-            delta = ` <span style="color: #888; font-size: 0.8rem;"> ${sinal}${Math.abs(delta)}</span>`;
+            setas = `<span class="setas vermelha">${sinal.repeat(num_setas)}</span>`;
+            delta = ` <span class="delta"> -${Math.abs(delta)}</span>`;
         } else {
             setas = ``;
             delta = ``;
@@ -612,8 +614,11 @@ async function view_ranking1(n) {
             let $tr = document.createElement('tr');
             $tr.innerHTML = `
                 <td>${id_hash.slice(0, 5)}</td>
-                <td class="center">${rank}${delta}</td>
-                <td><a href="#/p/${id_hash}">${nick || "(sem nome)"}${setas}</a></td>
+                <td class="center">${rank}</td>
+                <td>
+                    <span class="nome"><a href="#/p/${id_hash}">${nick || "(sem nome)"}</a></span>
+                    <br>${delta} ${setas}
+                </td>
                 <td class="center">${pontos}</td>
                 <td>${calculo}</td>
             `;

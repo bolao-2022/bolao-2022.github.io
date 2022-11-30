@@ -1,4 +1,21 @@
+/* v: 3 */
+html {
+  font-family: 'Roboto', sans-serif;
+}
+
 * { margin: 0; padding: 0; }
+
+.tipo-ponto {
+  font-size: 0.9rem;
+  color: #777;
+}
+.setas { font-size: 0.9rem; letter-spacing: -6px; }
+.verde { color: green; }
+.vermelha { color: red; }
+.delta {
+  color: #888;
+  font-size: 0.9rem;
+}
 
 table {
   width: 100%;
@@ -13,6 +30,13 @@ tr, td, th {
   padding: 20px;
 }
 
+.nome {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 20em;
+    display: inline-block;
+    white-space: nowrap;
+}
 
 th {
   text-align: left;
@@ -33,7 +57,6 @@ body {
     "content";
   grid-template-rows: auto 1fr;
   height: 100vh;
-  font-family: Roboto;
 }
 
 header {
@@ -174,6 +197,9 @@ versao-site {
                     #tab-ranking {
                       font-size: 150%;
                       white-space: nowrap;
+                    }
+                    .nome {
+                      max-width: 12em;
                     }
                 }
                 @media not (max-width: 1200px) {
