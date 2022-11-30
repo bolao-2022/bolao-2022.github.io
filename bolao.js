@@ -31,7 +31,7 @@ export async function userdata(pidx, reload = false) {
         _userdata.fn_palpites = _userdata.arqs[0];
         _userdata.fn_tabela = _userdata.arqs[1];
         _userdata.fn_ranking1 = _userdata.arqs[2];
-        _userdata.fn_evolucao1 = "evolucao-ranking1-37.json";
+        _userdata.fn_evolucao1 = "evolucao-ranking1-38.json";
         delete _userdata.arqs;
         return _userdata;
     }
