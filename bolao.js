@@ -67,6 +67,7 @@ export async function get_tabela() {
 }
 
 let _ranking1 = {};
+window._ranking1 = _ranking1;
 export async function get_ranking1(n) {
     if (_ranking1[n]) {
         return _ranking1[n];

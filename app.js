@@ -559,6 +559,9 @@ async function view_ranking1(n) {
     let ranking = await bolao.get_ranking1(n);
     let tab_ranking = [];
     Object.keys(ranking).forEach(id_hash => {
+        if (id_hash[0] == '~') {
+            return;
+        }
         let nick = ranking[id_hash].nick || "";
         let pontos = ranking[id_hash].total_pontos;
         let rank = ranking[id_hash].rank;
