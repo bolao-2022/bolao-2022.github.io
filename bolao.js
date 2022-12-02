@@ -61,12 +61,11 @@ export async function get_tabela() {
     }
 
     let udata = await userdata(get_pidx());
-    _tabela = await (await fetch(`${FILES}/${udata.fn_tabela}`)).json();
+    _tabela = await (await fetch(`${FILES}/${udata.fn_tabela}?v=1`)).json();
     return _tabela;
 }
 
 let _ranking1 = {};
-window._ranking1 = _ranking1;
 export async function get_ranking1(n) {
     if (_ranking1[n]) {
         return _ranking1[n];
