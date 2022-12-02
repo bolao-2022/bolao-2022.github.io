@@ -527,11 +527,14 @@ async function view_jogo(jid) {
 }
 
 async function view_ranking1(n) {
-    let [udata, evolucao] = await Promise.all([
-        bolao.userdata(get_pidx()),
-        bolao.get_evolucao()
-    ]);
+    let udata = await bolao.userdata(get_pidx());
     n = n || Number(udata.fn_ranking1.replace(/\D/g, ''));
+
+    let [evolucao, ranking] = await Promise.all([
+        bolao.get_evolucao(),
+        bolao.get_ranking1(n),
+    ]);
+
     view_header(udata);
     window.scrollTo(0,0); 
     let $main = document.querySelector("main");
@@ -556,7 +559,6 @@ async function view_ranking1(n) {
       </table>
     `;
 
-    let ranking = await bolao.get_ranking1(n);
     let tab_ranking = [];
     Object.keys(ranking).forEach(id_hash => {
         if (id_hash[0] == '~') {

@@ -31,7 +31,6 @@ export async function userdata(pidx, reload = false) {
         _userdata.fn_palpites = _userdata.arqs[0];
         _userdata.fn_tabela = _userdata.arqs[1];
         _userdata.fn_ranking1 = _userdata.arqs[2];
-        _userdata.fn_evolucao1 = "evolucao-ranking1-44.json";
         delete _userdata.arqs;
         return _userdata;
     }
@@ -85,10 +84,8 @@ export async function get_evolucao() {
         return _evolucao;
     }
 
-    let udata = await userdata(get_pidx());
-    let n = 36; // ler de udata também
-    let filename = udata.fn_evolucao1;
-    _evolucao = await (await fetch(`${FILES}/${filename}`)).json();
+    let ranking1 = await get_ranking1();
+    _evolucao = ranking1['~evol1'];
     window._evolucao = _evolucao;
     return _evolucao;
 }
