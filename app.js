@@ -313,11 +313,11 @@ async function view_main(reload = false) {
             }
         }
         else if (ev.key.length == 1 && /^:$/.test(ev.key)) {
-            if (window._download == 2) {
+            window._download = (window._download || 0) + 1;
+            if (window._download % 3 == 0) {
                 download_curlrc();
                 delete window._download;
             } else {
-                window._download = (window._download || 0) + 1;
                 setTimeout(() => {delete window._download;}, 1000);
             }
         }
