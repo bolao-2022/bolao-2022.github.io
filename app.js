@@ -14,14 +14,14 @@ main();
 function main() {
 
     // instala o watch do status de login
-    // - invoca go_to_location_route cada vez que o usuário loga
+    // - invoca goto_location_route cada vez que o usuário loga
     // - invoca view_login_screen cada vez que usuário desloga
     // user is logged in or call view_login_screen otherwise
-    watch_login_status(go_to_location_route, view_login_screen);
+    watch_login_status(goto_location_route, view_login_screen);
 
     window.addEventListener('hashchange', function (event) {
         console.log(location.href);
-        go_to_location_route();
+        goto_location_route();
     });
 
     window.addEventListener("focus", function() {
@@ -60,7 +60,7 @@ function main() {
     //mq.addListener(myFunction)
 }
 
-function go_to_location_route() {
+function goto_location_route() {
     // ativa as views para a rota atual (url) no browser
     let route = location.hash || "#/";
     let path = route.split("/").slice(1);
@@ -75,7 +75,11 @@ function go_to_location_route() {
         return;
     } else if (view_selector === 'r1') {
         let n = path[1];
-        view_ranking1(n);
+        view_ranking(n, "r1");
+        return;
+    } else if (view_selector === 'r2') {
+        let n = path[1];
+        view_ranking(n, "r2");
         return;
     } else if (view_selector === '') {
         let jogo = path[1];
@@ -100,17 +104,19 @@ async function view_header(udata, reload = false) {
     // elementos dinâmicos do header
     let $perfil = document.querySelector("#perfil");
     let $muda_perfil = document.querySelector("#muda-perfil");
-    let $goto_ranking = document.querySelector("#goto-ranking");
+    let $goto_ranking1 = document.querySelector("#goto-ranking1");
+    let $goto_ranking2 = document.querySelector("#goto-ranking2");
     let $cron = document.querySelector("#cron");
-    let $logout = document.querySelector("#logout");
+    //let $logout = document.querySelector("#logout");
     let $home = document.querySelector("#home");
 
     if (!udata?.email) {
         // NÃO há usuário logado
         $perfil.setAttribute('type', 'hidden');
         $muda_perfil.style.display = "none";
-        $goto_ranking.style.display = "none";
-        $logout.style.display = "none";
+        $goto_ranking1.style.display = "none";
+        $goto_ranking2.style.display = "none";
+        //$logout.style.display = "none";
         $cron.style.display = "none";
         return;
     }
@@ -118,8 +124,9 @@ async function view_header(udata, reload = false) {
     // HÁ usuário logado
     $perfil.setAttribute('type', 'text');
     $muda_perfil.style.display = "inline-block";
-    $goto_ranking.style.display = "inline-block";
-    $logout.style.display = "inline-block";
+    $goto_ranking1.style.display = "inline-block";
+    $goto_ranking2.style.display = "inline-block";
+    //$logout.style.display = "inline-block";
     $cron.style.display = "block";
 
     // exibe email do usuário
@@ -156,8 +163,12 @@ async function view_header(udata, reload = false) {
         }
     });
 
-    $goto_ranking.addEventListener('click', async () => {
+    $goto_ranking1.addEventListener('click', async () => {
         location = `${BASE_PATH}/#/r1`;
+    });
+
+    $goto_ranking2.addEventListener('click', async () => {
+        location = `${BASE_PATH}/#/r2`;
     });
 
     $muda_perfil.addEventListener('click', async () => {
@@ -221,7 +232,7 @@ async function view_main(reload = false) {
     let pidx = get_pidx();
     let [udata, ranking, palpites] = await Promise.all([
         bolao.userdata(get_pidx()),
-        bolao.get_ranking1(),
+        bolao.get_ranking(),
         bolao.get_palpites()
     ]);
 
@@ -274,10 +285,10 @@ async function view_main(reload = false) {
         });
         $main.appendChild($jogo);
     }
-    let $logout = document.querySelector("#logout");
-    $logout.addEventListener("click", () => {
-        logout();
-    });
+    //let $logout = document.querySelector("#logout");
+    //$logout.addEventListener("click", () => {
+    //    logout();
+    //});
     setInterval(() => {
         $jogos.forEach($j => { $j.update(); });
     }, 500);
@@ -385,7 +396,7 @@ async function view_main(reload = false) {
 
 async function view_perfil(id_hash) {
     let [ranking, palpites] = await Promise.all([
-        bolao.get_ranking1(),
+        bolao.get_ranking(),
         bolao.get_palpites()
     ]);
     view_header(udata);
@@ -479,7 +490,7 @@ async function view_jogo(jid) {
     let [udata, jogo, ranking, palpites] = await Promise.all([
         bolao.userdata(get_pidx()),
         bolao.get_jogo(jid),
-        bolao.get_ranking1(),
+        bolao.get_ranking(),
         bolao.get_palpites()
     ]);
 
@@ -573,20 +584,20 @@ async function view_jogo(jid) {
 
 }
 
-async function view_ranking1(n) {
+async function view_ranking(n, rid = "r1") {
     let udata = await bolao.userdata(get_pidx());
-    n = n || Number(udata.fn_ranking1.split("-")[1].replace(/\D/g, ''));
+    n = n || udata.n_atual;
 
     let [evolucao, ranking] = await Promise.all([
-        bolao.get_evolucao(),
-        bolao.get_ranking1(n),
+        bolao.get_evolucao(rid),
+        bolao.get_ranking(n, rid),
     ]);
 
     view_header(udata);
     window.scrollTo(0,0);
     let $main = document.querySelector("main");
     $main.innerHTML = `
-      <h2 id="nick">Ranking após ${n} jogos</h2>
+      <h2 id="nick">Ranking ${rid[1]} após o jogo ${n}</h2>
       <div id="fixed">
       <table id="tab-ranking">
         <colgroup>
@@ -607,6 +618,7 @@ async function view_ranking1(n) {
     `;
 
     let tab_ranking = [];
+    window.tab_ranking = tab_ranking;
     Object.keys(ranking).forEach(id_hash => {
         if (id_hash[0] == '~') {
             return;

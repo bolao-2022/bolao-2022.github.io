@@ -31,6 +31,8 @@ export async function userdata(pidx, reload = false) {
         _userdata.fn_palpites = _userdata.arqs[0];
         _userdata.fn_tabela = _userdata.arqs[1];
         _userdata.fn_ranking1 = _userdata.arqs[2];
+        _userdata.fn_ranking2 = _userdata.fn_ranking1.replace("ranking1", "ranking2");
+        _userdata.n_atual = Number(_userdata.fn_ranking1.split("-")[1].replace(/\D/g, ''));
         delete _userdata.arqs;
         return _userdata;
     }
@@ -65,27 +67,35 @@ export async function get_tabela() {
     return _tabela;
 }
 
-let _ranking1 = {};
-export async function get_ranking1(n) {
-    if (_ranking1[n]) {
-        return _ranking1[n];
+let _rankings = {};
+export async function get_ranking(n, rid = "r1") {
+    let udata = await userdata(get_pidx());
+    n = n || udata.n_atual;
+
+    let filename;
+    if (rid == 'r1') {
+        filename = (typeof n == 'undefined') || (n === null) ?  udata.fn_ranking1 : `ranking1-${n}.json`;
+    } else if (rid == 'r2') {
+        filename = (typeof n == 'undefined') || (n === null) ?  udata.fn_ranking2 : `ranking2-${n}.json`;
     }
 
-    let udata = await userdata(get_pidx());
-    let filename = typeof n == 'undefined' ?  udata.fn_ranking1 : `ranking1-${n}.json?v=0`;
-    _ranking1[n] = await (await fetch(`${FILES}/${filename}`)).json();
-    return _ranking1[n];
+    if (_rankings[filename]) {
+        return _rankings[filename];
+    }
+
+    _rankings[filename] = await (await fetch(`${FILES}/${filename}?v=0`)).json();
+    return _rankings[filename];
 }
 
-let _evolucao;
-export async function get_evolucao() {
-    if (_evolucao) {
-        return _evolucao;
+let _evolucoes = {};
+export async function get_evolucao(rid) {
+    if (_evolucoes[rid]) {
+        return _evolucoes[rid];
     }
 
-    let ranking1 = await get_ranking1();
-    _evolucao = ranking1['~evol1'];
-    return _evolucao;
+    let ranking1 = await get_ranking(null, rid);
+    _evolucoes[rid] = ranking1['~evol1'];
+    return _evolucoes[rid];
 }
 
 export async function get_palpite_salvo(email, pidx, jid) {

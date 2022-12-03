@@ -200,6 +200,14 @@ versao-site {
                     .nome {
                       max-width: 12em;
                     }
+                    header input {
+                        width: 100%;
+                    }
+                    button {
+                        padding: 6px;
+                        font-size: 120%;
+                        margin-right: 6px;
+                    }
                 }
                 @media not (max-width: 1200px) {
                     #sigla1, #sigla2 {
