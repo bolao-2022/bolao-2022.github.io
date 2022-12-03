@@ -597,7 +597,7 @@ async function view_ranking(n, rid = "r1") {
     window.scrollTo(0,0);
     let $main = document.querySelector("main");
     $main.innerHTML = `
-      <h2 id="nick">Ranking ${rid[1]} após o jogo ${n}</h2>
+      <h2 id="nick">Ranking ${rid[1]} após ${rid == 'r1' ? n : n - 48} jogos</h2>
       <div id="fixed">
       <table id="tab-ranking">
         <colgroup>
