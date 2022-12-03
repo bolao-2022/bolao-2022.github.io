@@ -72,7 +72,7 @@ export async function get_ranking1(n) {
     }
 
     let udata = await userdata(get_pidx());
-    let filename = typeof n == 'undefined' ?  udata.fn_ranking1 : `ranking-${n}.json?v=0`;
+    let filename = typeof n == 'undefined' ?  udata.fn_ranking1 : `ranking1-${n}.json?v=0`;
     _ranking1[n] = await (await fetch(`${FILES}/${filename}`)).json();
     return _ranking1[n];
 }
