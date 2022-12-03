@@ -596,8 +596,9 @@ async function view_ranking(n, rid = "r1") {
     view_header(udata);
     window.scrollTo(0,0);
     let $main = document.querySelector("main");
+    let n_rank = rid == 'r1' ? n : n - 48;
     $main.innerHTML = `
-      <h2 id="nick">Ranking ${rid[1]} após ${rid == 'r1' ? n : n - 48} jogos</h2>
+      <h2 id="nick">Ranking ${rid[1]} após ${n_rank} jogos</h2>
       <div id="fixed">
       <table id="tab-ranking">
         <colgroup>
@@ -626,7 +627,7 @@ async function view_ranking(n, rid = "r1") {
         let nick = ranking[id_hash].nick || "";
         let pontos = ranking[id_hash].total_pontos;
         let rank = ranking[id_hash].rank;
-        let delta = evolucao[id_hash].rank[n - 2] - evolucao[id_hash].rank[n - 1];
+        let delta = evolucao[id_hash].rank[n_rank - 2] - evolucao[id_hash].rank[n_rank - 1];
         // let sinal = delta > 0 ? "🡱" : (delta < 0 ? "🡳" : "");
         let sinal = delta > 0 ? "▲" : (delta < 0 ? "▼" : "");
         //let sinal = delta > 0 ? `<i class="fa-sharp fa-solid fa-up"></i>`: (delta < 0 ? `<i class="fa-sharp fa-solid fa-down"></i>` : "");
