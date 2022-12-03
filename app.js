@@ -575,7 +575,7 @@ async function view_jogo(jid) {
 
 async function view_ranking1(n) {
     let udata = await bolao.userdata(get_pidx());
-    n = n || Number(udata.fn_ranking1.replace(/\D/g, ''));
+    n = n || Number(udata.fn_ranking1.split("-")[1].replace(/\D/g, ''));
 
     let [evolucao, ranking] = await Promise.all([
         bolao.get_evolucao(),
