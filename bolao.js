@@ -85,11 +85,9 @@ export async function get_evolucao() {
 
     let ranking1 = await get_ranking1();
     _evolucao = ranking1['~evol1'];
-    window._evolucao = _evolucao;
     return _evolucao;
 }
 
-window.get_palpite_salvo = get_palpite_salvo;
 export async function get_palpite_salvo(email, pidx, jid) {
     let palpites = await get_palpites();
     if (jid in palpites) {
@@ -100,7 +98,6 @@ export async function get_palpite_salvo(email, pidx, jid) {
     return null;
 }
 
-window.get_palpite_rascunho = get_palpite_rascunho;
 export async function get_palpite_rascunho(pidx, jid) {
     let rascunho = (await userdata(pidx))?.perfil?.rascunho || {};
     if (Object.keys(rascunho).includes(String(jid))) {
@@ -350,6 +347,20 @@ class BolaoJogo extends HTMLElement {
         $input1.addEventListener("keyup", keyup_handler);
         $input2.addEventListener("keyup", keyup_handler);
         this.update();
+    }
+
+    async is_ready() {
+        return new Promise(res => {
+            let that = this;
+            function check() {
+                if (that.jogo?._hora) {
+                    res();
+                } else {
+                    setTimeout(check, 10);
+                }
+            }
+            check();
+        });
     }
 
     async get_placar() {

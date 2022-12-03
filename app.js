@@ -113,7 +113,7 @@ async function view_header(udata, reload = false) {
         $logout.style.display = "none";
         $cron.style.display = "none";
         return;
-    } 
+    }
 
     // HÁ usuário logado
     $perfil.setAttribute('type', 'text');
@@ -246,12 +246,12 @@ async function view_main(reload = false) {
     // - header: contador + perfil + menu
     // - main: tabela da copa + placares + palpites + pontos + rascunho
     let $main = document.querySelector("main");
-    $main.innerHTML = '';
+    $main.innerHTML = '<h2></h2>';
     let rascunho = udata?.perfil?.rascunho || {};
     let id_perfil = `${udata.email}:${udata.pidx}`;
     let $jogos = [];
     window.$jogos = $jogos;
-    for (let jid=49; jid<=56; jid++) {
+    for (let jid=1; jid<=56; jid++) {
         let $jogo = document.createElement("bolao-jogo");
         $jogo.pidx = pidx;
         if (udata.perfil.id_hash) {
@@ -282,37 +282,27 @@ async function view_main(reload = false) {
         $jogos.forEach($j => { $j.update(); });
     }, 500);
 
-    function filtra_jogos(criterios) {
-        $jogos.forEach($j => {
-            $j.style.display = "block";
-            if (criterios.grupo && !$j.jogo.grupo.startsWith(criterios.grupo)) {
-                $j.style.display = "none";
-            }
-            let now = new Date().toISOString().slice(0, 10);
-            if (criterios.prazo && $j.jogo.hora > criterios.prazo || $j.jogo.hora < now) {
-                $j.style.display = "none";
-            }
-        });
-    }
-
     let filtros = [];
-    let criterios = {};
-    document.body.addEventListener('keyup', ev => {
+    let criterios = {grupo: 'O'};
+    await update_jogos(criterios);
+
+    document.body.addEventListener('keyup', async ev => {
         if (ev.key.length == 1 && /^[abcdefghoqsxABCDEFGHOQSX]+$/.test(ev.key)) {
             let grupo = ev.key.toUpperCase();
-            if (criterios.grupo == grupo) {
+            if (grupo == criterios.grupo) {
                 delete criterios.grupo;
             } else {
                 criterios.grupo = ev.key.toUpperCase();
             }
         }
-        else if (ev.key.length == 1 && ev.key == '*') {
+        else if (ev.key.length == 1 && ev.key == '*' || ev.key.toLowerCase() == 't') {
             delete criterios.grupo;
+            delete criterios.prazo;
         }
         else if (ev.key.length == 1 && /^[0-9]+$/.test(ev.key)) {
             // mostrar todos nos próximos N dias
             delete criterios.grupo;
-            delete criterios.state;
+            criterios.dias = ev.key;
             let N = Number(ev.key);
             if (N === 0) {
                 delete criterios.prazo;
@@ -331,8 +321,65 @@ async function view_main(reload = false) {
                 setTimeout(() => {delete window._download;}, 1000);
             }
         }
-        filtra_jogos(criterios);
+        await update_jogos(criterios);
     });
+
+    async function update_jogos(criterios) {
+        let $h2 = $main.querySelector("h2");
+        switch (criterios.grupo) {
+            case 'T': $h2.innerText = "Tabela completa"; break;
+            case 'O': $h2.innerText = "Oitavas de final"; break;
+            case 'Q': $h2.innerText = "Quartas de final"; break;
+            case 'S': $h2.innerText = "Semi-finais"; break;
+            case 'X': $h2.innerText = "Finais"; break;
+            case 'A': $h2.innerText = "Grupo A"; break;
+            case 'B': $h2.innerText = "Grupo B"; break;
+            case 'C': $h2.innerText = "Grupo C"; break;
+            case 'D': $h2.innerText = "Grupo D"; break;
+            case 'E': $h2.innerText = "Grupo E"; break;
+            case 'F': $h2.innerText = "Grupo F"; break;
+            case 'G': $h2.innerText = "Grupo G"; break;
+            case 'H': $h2.innerText = "Grupo H"; break;
+        }
+        $jogos.forEach(async $j => {
+            $j.style.display = "none";
+            await $j.is_ready();
+            if (criterios.grupo) {
+                if ($j.jogo.grupo.startsWith(criterios.grupo.toUpperCase())) {
+                    $j.style.display = "block";
+                } else {
+                    $j.style.display = "none";
+                }
+            }
+
+            else if (criterios.prazo) {
+                let today = new Date().toISOString().slice(0, 10);
+                if ($j.jogo.hora >= today && $j.jogo.hora <= criterios.prazo) {
+                    $j.style.display = "block";
+                    switch (criterios.dias) {
+                        case '1': $h2.innerText = "Jogos de hoje"; break;
+                        case '2': $h2.innerText = "Jogos até amanhã"; break;
+                        case '3':
+                        case '4':
+                        case '5':
+                        case '6':
+                        case '7':
+                        case '8':
+                        case '9':
+                            $h2.innerText = `Jogos em até ${criterios.dias} dias`;
+                            break;
+                    }
+                } else {
+                    $j.style.display = "none";
+                }
+            }
+
+            else {
+                $h2.innerText = "Tabela completa";
+                $j.style.display = "block";
+            }
+        });
+    }
 
 }
 
@@ -342,7 +389,7 @@ async function view_perfil(id_hash) {
         bolao.get_palpites()
     ]);
     view_header(udata);
-    window.scrollTo(0,0); 
+    window.scrollTo(0,0);
     let $main = document.querySelector("main");
     let nick = ranking[id_hash].nick;
     $main.innerHTML = `
@@ -437,7 +484,7 @@ async function view_jogo(jid) {
     ]);
 
     view_header(udata);
-    window.scrollTo(0,0); 
+    window.scrollTo(0,0);
     let $main = document.querySelector("main");
     $main.innerHTML = `
         <div id="fixed"></div>
@@ -478,7 +525,7 @@ async function view_jogo(jid) {
         }
         tab_palpites.push([id_hash, nick, palpite, pontos]);
     })
-    
+
     let $tab_palpites = $main.querySelector("#tab-palpites");
     let $col_nome = $tab_palpites.querySelector("#col-nome");
     let $col_palpite = $tab_palpites.querySelector("#col-palpite");
@@ -536,7 +583,7 @@ async function view_ranking1(n) {
     ]);
 
     view_header(udata);
-    window.scrollTo(0,0); 
+    window.scrollTo(0,0);
     let $main = document.querySelector("main");
     $main.innerHTML = `
       <h2 id="nick">Ranking após ${n} jogos</h2>
@@ -607,8 +654,6 @@ async function view_ranking1(n) {
     ordena_tabela();
 
     // adiciona controllers pra ordenar a tabela
-    window.update_tabela = update_tabela;
-    window.$t = $tab_ranking;
     function update_tabela() {
         for (let i=$tab_ranking.rows.length - 1; i>0; i--) {
             let $row = $tab_ranking.rows[i];
