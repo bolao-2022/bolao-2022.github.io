@@ -13,6 +13,7 @@ main h2 {
   color: #ccc;
   font-size: 220%;
   padding: 0 8px;
+  float: right;
 }
 
 * { margin: 0; padding: 0; }
