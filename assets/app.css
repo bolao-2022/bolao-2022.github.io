@@ -9,12 +9,10 @@ main h2 {
   align-items: center;
 }
 
-
 .star {
   color: #ccc;
   font-size: 220%;
   padding: 0 8px;
-  float: right;
 }
 
 * { margin: 0; padding: 0; }
