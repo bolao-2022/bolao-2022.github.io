@@ -2,6 +2,13 @@ html {
   font-family: 'Roboto', sans-serif;
 }
 
+.star {
+  color: #ccc;
+  font-size: 220%;
+  padding: 0 8px;
+  float: right;
+}
+
 * { margin: 0; padding: 0; }
 
 .tipo-ponto {
@@ -10,7 +17,9 @@ html {
 }
 .setas { font-size: 0.9rem; letter-spacing: -6px; }
 .verde { color: green; }
+.gold { color: gold; }
 .vermelha { color: red; }
+.cinza { color: #ccc; }
 .delta {
   color: #888;
   font-size: 0.9rem;
@@ -208,6 +217,12 @@ versao-site {
                         font-size: 120%;
                         margin-right: 6px;
                     }
+                    table .star {
+                      font-size: 100%;
+                      padding: 0 4px;
+                      float: right;
+                    }
+
                 }
                 @media not (max-width: 1200px) {
                     #sigla1, #sigla2 {

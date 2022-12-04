@@ -598,7 +598,7 @@ async function view_ranking(n, rid = "r1") {
     let $main = document.querySelector("main");
     let n_rank = rid == 'r1' ? n : n - 48;
     $main.innerHTML = `
-      <h2 id="nick">Ranking ${rid[1]} após ${n_rank} jogos</h2>
+      <h2 id="nick">Ranking ${rid[1]} após ${n_rank} jogos<span id="filtra-favoritos" class="star">★</span></h2>
       <div id="fixed">
       <table id="tab-ranking">
         <colgroup>
@@ -661,6 +661,15 @@ async function view_ranking(n, rid = "r1") {
     let $col_rank = $tab_ranking.querySelector("#col-rank");
     let $col_nick = $tab_ranking.querySelector("#col-nick");
     let $col_pontos = $tab_ranking.querySelector("#col-pontos");
+    let $filtra_favoritos = $main.querySelector("#filtra-favoritos");
+    let favoritos = JSON.parse(localStorage.getItem("favoritos")) || {};
+    let filtra_favoritos = Boolean(localStorage.getItem('filtra_favoritos'));
+    $filtra_favoritos.addEventListener('click', () => {
+        filtra_favoritos = !filtra_favoritos;
+        console.log("filtra_favoritos = ", filtra_favoritos);
+        localStorage.setItem("filtra_favoritos", filtra_favoritos);
+        update_tabela();
+    });
     update_tabela();
     let ordem = 1;
     let _coluna = 1;
@@ -675,17 +684,39 @@ async function view_ranking(n, rid = "r1") {
 
         tab_ranking.forEach(([id_hash, rank, nick, pontos, calculo, delta, setas]) => {
             let $tr = document.createElement('tr');
+            let cor = favoritos[id_hash] ? 'gold' : 'cinza';
             $tr.innerHTML = `
                 <td>${id_hash.slice(0, 5)}</td>
                 <td class="center">${rank}</td>
                 <td>
-                    <span class="nome"><a href="#/p/${id_hash}">${nick || "(sem nome)"}</a></span>
+                    <span id="marca-favorito" class="star ${cor}">★</span>
+                    <span class="nome">
+                    <a href="#/p/${id_hash}">
+                    ${nick || "(sem nome)"}</a></span>
                     <br>${delta} ${setas}
                 </td>
                 <td class="center">${pontos}</td>
                 <td>${calculo}</td>
             `;
+            let $star = $tr.querySelector("#marca-favorito");
+            $star.addEventListener('click', () => {
+                console.log("favoritando: ", id_hash);
+                favoritos[id_hash] = !favoritos[id_hash];
+                if (favoritos[id_hash]) {
+                    $star.classList.add("gold");
+                    $star.classList.remove("cinza");
+                } else {
+                    $star.classList.remove("gold");
+                    $star.classList.add("cinza");
+                }
+                localStorage.setItem("favoritos", JSON.stringify(favoritos));
+            });
             $tab_ranking.appendChild($tr);
+            if (filtra_favoritos && !favoritos[id_hash]) {
+                $tr.style.display = 'none';
+            } else {
+                $tr.style.display = '';
+            }
         });
         $main.appendChild($tab_ranking);
     }
