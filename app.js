@@ -666,7 +666,6 @@ async function view_ranking(n, rid = "r1") {
     let filtra_favoritos = Boolean(localStorage.getItem('filtra_favoritos'));
     $filtra_favoritos.addEventListener('click', () => {
         filtra_favoritos = !filtra_favoritos;
-        console.log("filtra_favoritos = ", filtra_favoritos);
         localStorage.setItem("filtra_favoritos", filtra_favoritos);
         update_tabela();
     });
@@ -677,6 +676,11 @@ async function view_ranking(n, rid = "r1") {
 
     // adiciona controllers pra ordenar a tabela
     function update_tabela() {
+        if (filtra_favoritos) {
+            $filtra_favoritos.classList.add("gold");
+        } else {
+            $filtra_favoritos.classList.remove("gold");
+        }
         for (let i=$tab_ranking.rows.length - 1; i>0; i--) {
             let $row = $tab_ranking.rows[i];
             $row.remove();
