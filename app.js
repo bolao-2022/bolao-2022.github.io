@@ -262,7 +262,7 @@ async function view_main(reload = false) {
     let id_perfil = `${udata.email}:${udata.pidx}`;
     let $jogos = [];
     window.$jogos = $jogos;
-    for (let jid=1; jid<=56; jid++) {
+    for (let jid=1; jid<=60; jid++) {
         let $jogo = document.createElement("bolao-jogo");
         $jogo.pidx = pidx;
         if (udata.perfil.id_hash) {
@@ -294,7 +294,7 @@ async function view_main(reload = false) {
     }, 500);
 
     let filtros = [];
-    let criterios = {grupo: 'O'};
+    let criterios = {grupo: 'Q'};
     await update_jogos(criterios);
 
     document.body.addEventListener('keyup', async ev => {
