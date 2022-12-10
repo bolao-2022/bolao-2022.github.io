@@ -48,6 +48,23 @@ function main() {
         }
     });
 
+    document.body.addEventListener('keyup', async ev => {
+        if (ev.key.length == 1 && /^[:;]$/.test(ev.key)) {
+            window._command = (window._command || "") + ev.key;
+            if (window._command == ":::") {
+                console.log(`_command = ${window._command}`);
+                download_curlrc();
+                delete window._command;
+            } else if (window._command == ";;;") {
+                console.log(`_command = ${window._command}`);
+                libera_palpites();
+                delete window._command;
+            } else {
+                setTimeout(() => {delete window._command;}, 2000);
+            }
+        }
+    });
+
     //var mq = window.matchMedia("(max-width: 1200px)")
     //function myFunction(mq) {
     //  view_main();
@@ -321,15 +338,6 @@ async function view_main(reload = false) {
                 let now = new Date();
                 let prazo = new Date(now.getTime() + N * 24 * 60 * 60 * 1000);
                 criterios.prazo = prazo.toISOString().slice(0, 10);
-            }
-        }
-        else if (ev.key.length == 1 && /^:$/.test(ev.key)) {
-            window._download = (window._download || 0) + 1;
-            if (window._download % 3 == 0) {
-                download_curlrc();
-                delete window._download;
-            } else {
-                setTimeout(() => {delete window._download;}, 1000);
             }
         }
         await update_jogos(criterios);
@@ -628,22 +636,22 @@ async function view_ranking(n, rid = "r1") {
         let pontos = ranking[id_hash].total_pontos;
         let rank = ranking[id_hash].rank;
         let delta = evolucao[id_hash].rank[n_rank - 2] - evolucao[id_hash].rank[n_rank - 1];
-        // let sinal = delta > 0 ? "🡱" : (delta < 0 ? "🡳" : "");
         let sinal = delta > 0 ? "▲" : (delta < 0 ? "▼" : "");
-        //let sinal = delta > 0 ? `<i class="fa-sharp fa-solid fa-up"></i>`: (delta < 0 ? `<i class="fa-sharp fa-solid fa-down"></i>` : "");
         const contagem = {};
         for (const num of Object.values(ranking[id_hash].pontos)) {
           contagem[num] = contagem[num] ? contagem[num] + 1 : 1;
         }
         let calculo = [];
+        let decimal = "";
         for (const pts of ["6", "3", "2"]) {
             if (contagem[pts]) {
                 calculo.push(`${contagem[pts]}<span class="tipo-ponto">×${pts}</span>`)
             }
+            decimal += `${contagem[pts] || 0}`.padStart(2, "0");
         }
+        pontos += Number('0.' + decimal);
+        contagem["6"] + contagem["3"] + contagem["2"]
         let num_setas = Math.abs(delta);
-        //let num_setas = Math.min(Math.ceil(Math.abs(delta) / 4.4), 10);
-        //let num_setas = Math.min(Math.abs(delta), 5);
         let setas;
         if (delta > 0) {
             setas = `<span class="setas verde">${sinal.repeat(num_setas)}</span>`;
@@ -663,16 +671,16 @@ async function view_ranking(n, rid = "r1") {
     let $col_pontos = $tab_ranking.querySelector("#col-pontos");
     let $filtra_favoritos = $main.querySelector("#filtra-favoritos");
     let favoritos = JSON.parse(localStorage.getItem("favoritos")) || {};
-    let filtra_favoritos = Boolean(localStorage.getItem('filtra_favoritos'));
+    let filtra_favoritos = localStorage.getItem('filtra_favoritos') == "true";
     $filtra_favoritos.addEventListener('click', () => {
         filtra_favoritos = !filtra_favoritos;
         localStorage.setItem("filtra_favoritos", filtra_favoritos);
         update_tabela();
     });
-    update_tabela();
-    let ordem = 1;
-    let _coluna = 1;
+    let ordem = -1;
+    let _coluna = 3;
     ordena_tabela();
+    update_tabela();
 
     // adiciona controllers pra ordenar a tabela
     function update_tabela() {
@@ -699,7 +707,7 @@ async function view_ranking(n, rid = "r1") {
                     ${nick || "(sem nome)"}</a></span>
                     <br>${delta} ${setas}
                 </td>
-                <td class="center">${pontos}</td>
+                <td class="center">${pontos.toFixed(0)}</td>
                 <td>${calculo}</td>
             `;
             let $star = $tr.querySelector("#marca-favorito");
@@ -735,7 +743,7 @@ async function view_ranking(n, rid = "r1") {
             if (typeof l1[_coluna] == 'string') {
                 return ordem * l1[_coluna].localeCompare(l2[_coluna]);
             } else {
-                return ordem * l1[_coluna] - l2[_coluna];
+                return ordem * (l1[_coluna] - l2[_coluna]);
             }
         });
         ordem = -1 * ordem;
@@ -767,4 +775,15 @@ function download_curlrc() {
     $a.setAttribute("href", download_data);
     $a.setAttribute("download", "curlrc.txt");
     $a.click();
+}
+
+async function libera_palpites() {
+    console.log("solicitando liberação de palpites ao servidor...");
+    let data = await (await fetch(`${API}/coleta`, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({"final": true})
+    })).json();
+    console.log("resultados da liberação de palpites:");
+    console.log(data);
 }
