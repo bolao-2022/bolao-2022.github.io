@@ -279,7 +279,7 @@ async function view_main(reload = false) {
     let id_perfil = `${udata.email}:${udata.pidx}`;
     let $jogos = [];
     window.$jogos = $jogos;
-    for (let jid=1; jid<=60; jid++) {
+    for (let jid=1; jid<=62; jid++) {
         let $jogo = document.createElement("bolao-jogo");
         $jogo.pidx = pidx;
         if (udata.perfil.id_hash) {
@@ -311,7 +311,7 @@ async function view_main(reload = false) {
     }, 500);
 
     let filtros = [];
-    let criterios = {grupo: 'Q'};
+    let criterios = {grupo: 'S'};
     await update_jogos(criterios);
 
     document.body.addEventListener('keyup', async ev => {
@@ -606,7 +606,8 @@ async function view_ranking(n, rid = "r1") {
     let $main = document.querySelector("main");
     let n_rank = rid == 'r1' ? n : n - 48;
     $main.innerHTML = `
-      <h2 id="nick">Ranking ${rid[1]} após ${n_rank} jogos<span id="filtra-favoritos" class="star">★</span></h2>
+      <h2>Ranking ${rid[1]} após ${n_rank} jogos<span id="filtra-favoritos" class="star">★</span></h2>
+      <p id="rank_aviso">* Em ordem de desempate pelos critérios estabelecidos.</p>
       <div id="fixed">
       <table id="tab-ranking">
         <colgroup>
