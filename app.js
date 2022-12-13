@@ -49,16 +49,20 @@ function main() {
     });
 
     document.body.addEventListener('keyup', async ev => {
-        if (ev.key.length == 1 && /^[:;]$/.test(ev.key)) {
+        if (ev.key.length == 1 && /^[:;,.]$/.test(ev.key)) {
             window._command = (window._command || "") + ev.key;
             if (window._command == ":::") {
                 console.log(`_command = ${window._command}`);
                 download_curlrc();
                 delete window._command;
-            } else if (window._command == ";;;") {
+            } else if (window._command == ",,,.,") {
                 console.log(`_command = ${window._command}`);
-                libera_palpites();
-                delete window._command;
+                let confirmacao = confirm("Libera palpites do próximo jogo?");
+                if (confirmacao == true) {
+                    await libera_palpites();
+                    alert("palpites liberados");
+                    delete window._command;
+                }
             } else {
                 setTimeout(() => {delete window._command;}, 2000);
             }
@@ -780,6 +784,7 @@ function download_curlrc() {
 
 async function libera_palpites() {
     console.log("solicitando liberação de palpites ao servidor...");
+    let headers = {"Authorization": `Bearer ${window.idToken}`};
     let data = await (await fetch(`${API}/coleta`, {
         method: 'POST',
         headers: headers,
