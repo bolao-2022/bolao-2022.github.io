@@ -63,7 +63,7 @@ export async function get_tabela() {
     }
 
     let udata = await userdata(get_pidx());
-    _tabela = await (await fetch(`${FILES}/${udata.fn_tabela}?v=1`)).json();
+    _tabela = await (await fetch(`${FILES}/${udata.fn_tabela}?v=2`)).json();
     return _tabela;
 }
 
