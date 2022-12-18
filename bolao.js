@@ -43,7 +43,7 @@ let _palpites;
 export async function get_palpites() {
     if (!_palpites) {
         let udata = await userdata(get_pidx());
-        _palpites = await (await fetch(`${FILES}/${udata.fn_palpites}?v=0`)).json();
+        _palpites = await (await fetch(`${FILES}/${udata.fn_palpites}?v=64`)).json();
         window.palpites = _palpites;
         Object.keys(_palpites).forEach(id_perfil => {
             _palpites[id_perfil].pontos = {};
@@ -65,7 +65,7 @@ export async function get_tabela() {
     }
 
     let udata = await userdata(get_pidx());
-    _tabela = await (await fetch(`${FILES}/${udata.fn_tabela}?v=0`)).json();
+    _tabela = await (await fetch(`${FILES}/${udata.fn_tabela}?v=64`)).json();
     return _tabela;
 }
 
@@ -86,7 +86,7 @@ export async function get_ranking(n, rid = "r1") {
         return _rankings[filename];
     }
 
-    _rankings[filename] = await (await fetch(`${FILES}/${filename}?v=0`)).json();
+    _rankings[filename] = await (await fetch(`${FILES}/${filename}?v=64`)).json();
     return _rankings[filename];
 }
 
