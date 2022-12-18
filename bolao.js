@@ -57,6 +57,7 @@ export async function get_palpites() {
 }
 
 let _tabela;
+window.get_tabela = get_tabela;
 export async function get_tabela() {
     if (_tabela) {
         return _tabela;
@@ -68,6 +69,7 @@ export async function get_tabela() {
 }
 
 let _rankings = {};
+window.get_ranking = get_ranking;
 export async function get_ranking(n, rid = "r1") {
     let udata = await userdata(get_pidx());
     n = n || udata.n_atual;
