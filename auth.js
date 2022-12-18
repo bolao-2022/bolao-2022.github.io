@@ -31,11 +31,13 @@ export function watch_login_status(user_logged_in, user_logged_out) {
     });
 }
 
+window.login = login;
 export function login() {
     //signInWithRedirect(auth, provider);
     signInWithPopup(auth, provider);
 }
 
+window.logout = logout;
 export function logout() {
     return new Promise(async function(resolve, reject) {
         try {
