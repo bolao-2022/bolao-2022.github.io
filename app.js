@@ -111,6 +111,7 @@ function goto_location_route() {
     }
 }
 
+window.get_pidx = get_pidx;
 function get_pidx() {
     return localStorage.getItem('pidx') || '0';
 }
