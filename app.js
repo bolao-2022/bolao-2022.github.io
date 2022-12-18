@@ -315,7 +315,7 @@ async function view_main(reload = false) {
     }, 500);
 
     let filtros = [];
-    let criterios = {grupo: 'X'};
+    let criterios = {};
     await update_jogos(criterios);
 
     document.body.addEventListener('keyup', async ev => {
