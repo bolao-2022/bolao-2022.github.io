@@ -6,6 +6,7 @@ function get_pidx() {
 }
 
 let _userdata;
+window.userdata = userdata;
 export async function userdata(pidx, reload = false) {
     if (!_userdata || reload) {
         // espera haver token disponível
