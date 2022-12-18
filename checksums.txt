@@ -3055,3 +3055,14 @@ fe58e3238039a2ce7c4e11ed5cbffe263f680870  ./auth.js
 43c4e7577cc8f9fbe0cb0e7307eb49f92e16a11b  ./index.html
 98485e36c872ac21e08a1dcff76e90976959fea5  ./rotas.md
 da39a3ee5e6b4b0d3255bfef95601890afd80709  ./build
+beceba5afc5a34c1ed76e089fa848c4364ea3af6  ./assets/app.css
+7536dd94426266899d82d18ce2e0c6a4b79d81c9  ./assets/progress.gif
+db3ee7906e4f2983e089b26fc57dae844d6a2cf3  ./bolao.js
+cabeaa1f124905b2df34bbc571c029c03179cd9f  ./utils.js
+3ec29dd14b446c013af8916f3f259ff7e1243f3b  ./app.js
+208fa152589302a84f2ca9cca513fdab188c6804  ./config.js
+fe58e3238039a2ce7c4e11ed5cbffe263f680870  ./auth.js
+1eb250f3fce5ea7b6fd380fe5a396c93bd69b12f  ./views.js
+43c4e7577cc8f9fbe0cb0e7307eb49f92e16a11b  ./index.html
+98485e36c872ac21e08a1dcff76e90976959fea5  ./rotas.md
+da39a3ee5e6b4b0d3255bfef95601890afd80709  ./build
