@@ -2,6 +2,11 @@ html {
   font-family: 'Roboto', sans-serif;
 }
 
+#cron {
+  /* escondido ao final do bolão */
+  visibility: hidden;
+}
+
 main h2 {
   display: flex;
   flex-direction: row;
